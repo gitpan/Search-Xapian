@@ -27,7 +27,7 @@ XS/MSetIterator.xs
 XS/Database.xs
 XS/Query.xs
 XS/QueryParser.xs
-XS/Stopper.xs
+XS/SimpleStopper.xs
 XS/MSet.xs
 XS/WritableDatabase.xs
 XS/Document.xs

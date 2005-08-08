@@ -7,7 +7,7 @@
 
 use Test::More;
 use Devel::Peek;
-BEGIN { plan tests => 72 };
+BEGIN { plan tests => 70 };
 use Search::Xapian qw(:ops);
 
 #########################
@@ -30,12 +30,11 @@ ok( $subqueries[0] = Search::Xapian::Query->new( 'test' ), "one-term queries ok"
 is( $subqueries[0]->get_description, "Xapian::Query(test)", "query parsed correctly" );
 
 # tests 5-14
-foreach my $op (OP_OR, OP_AND, OP_NEAR, OP_PHRASE,
-                OP_WEIGHT_CUTOFF) {
+foreach my $op (OP_OR, OP_AND, OP_NEAR, OP_PHRASE) {
   ok( $query = Search::Xapian::Query->new( $op, @subqueries ), "$Search::Xapian::OP_NAMES[$op] works with 1 object" );
   ok( $query = Search::Xapian::Query->new( $op, 'help' ), "$Search::Xapian::OP_NAMES[$op] works with 1 term" );
 }
-is( $query->get_description, "Xapian::Query((help))", "query parsed correctly" );
+is( $query->get_description, "Xapian::Query(help)", "query parsed correctly" );
 
 # tests 15-32
 $subqueries[1] = Search::Xapian::Query->new( 'help' );

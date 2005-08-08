@@ -43,7 +43,6 @@ our %EXPORT_TAGS = (
                                   OP_FILTER
                                   OP_NEAR
                                   OP_PHRASE
-                                  OP_WEIGHT_CUTOFF
                                   OP_ELITE_SET
                                  ) ],
                     'db' => [ qw(
@@ -62,7 +61,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
 
-our $VERSION = '0.8.4.0';
+our $VERSION = '0.9.2.1';
 
 bootstrap Search::Xapian $VERSION;
 

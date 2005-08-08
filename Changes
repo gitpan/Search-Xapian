@@ -1,5 +1,15 @@
 Revision history for Perl extension Search::Xapian.
 
+0.9.2.1  Mon Aug  8 12:24:34 2005
+	- Let perl know Search::Xapian::WritableDatabase is a subclass of 
+	  Search::Xapian::Database by adding the latter to the former's @INC.
+
+0.9.2.0  Mon Aug  8 12:08:25 2005
+	- Removed 'set_window', 'set_cutoff', 'set_elite_set_size' and
+	  'set_length' methods from Xapian::Query class
+	- Switched Search::Xapian::Stopper from using now abstract
+	  Xapian::Stopper class to Xapian::SimpleStopper subclass.
+	  
 0.8.4.0  Wed Dec  8 03:36:13 2004
 	[Changes contributed by Olly Betts]
 	- Changed Database and WritableDatabase constructors to use the new C++

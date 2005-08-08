@@ -7,9 +7,9 @@ Enquire *		O_OBJECT
 Query			O_QUERY
 Query *			O_QUERY
 QueryParser		O_QUERYPARSER
-QueryParser *	O_QUERYPARSER
-Stopper			O_STOPPER
-Stopper *		O_STOPPER
+QueryParser *		O_QUERYPARSER
+SimpleStopper		O_STOPPER
+SimpleStopper *		O_STOPPER
 Stem			O_OBJECT
 Stem *			O_OBJECT
 MSet			O_MSET

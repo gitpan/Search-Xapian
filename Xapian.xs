@@ -33,7 +33,7 @@ INCLUDE: XS/ESetIterator.xs
 INCLUDE: XS/RSet.xs
 INCLUDE: XS/Query.xs
 INCLUDE: XS/QueryParser.xs
-INCLUDE: XS/Stopper.xs
+INCLUDE: XS/SimpleStopper.xs
 INCLUDE: XS/TermIterator.xs
 INCLUDE: XS/PostingIterator.xs
 INCLUDE: XS/PositionIterator.xs
@@ -52,7 +52,6 @@ BOOT:
         newCONSTSUB( mHvStash, "OP_FILTER", newSViv(Query::OP_FILTER) );
         newCONSTSUB( mHvStash, "OP_NEAR", newSViv(Query::OP_NEAR) );
         newCONSTSUB( mHvStash, "OP_PHRASE", newSViv(Query::OP_PHRASE) );
-        newCONSTSUB( mHvStash, "OP_WEIGHT_CUTOFF", newSViv(Query::OP_WEIGHT_CUTOFF) );
         newCONSTSUB( mHvStash, "OP_ELITE_SET", newSViv(Query::OP_ELITE_SET) );
 
         newCONSTSUB( mHvStash, "DB_OPEN", newSViv(DB_OPEN) );

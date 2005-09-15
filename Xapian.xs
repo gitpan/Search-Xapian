@@ -39,6 +39,9 @@ INCLUDE: XS/PostingIterator.xs
 INCLUDE: XS/PositionIterator.xs
 INCLUDE: XS/ValueIterator.xs
 INCLUDE: XS/WritableDatabase.xs
+INCLUDE: XS/Weight.xs
+INCLUDE: XS/BM25Weight.xs
+INCLUDE: XS/BoolWeight.xs
 
 
 BOOT:
@@ -53,6 +56,10 @@ BOOT:
         newCONSTSUB( mHvStash, "OP_NEAR", newSViv(Query::OP_NEAR) );
         newCONSTSUB( mHvStash, "OP_PHRASE", newSViv(Query::OP_PHRASE) );
         newCONSTSUB( mHvStash, "OP_ELITE_SET", newSViv(Query::OP_ELITE_SET) );
+
+        newCONSTSUB( mHvStash, "ENQ_DESCENDING", newSViv(Enquire::DESCENDING) );
+        newCONSTSUB( mHvStash, "ENQ_ASCENDING", newSViv(Enquire::ASCENDING) );
+        newCONSTSUB( mHvStash, "ENQ_DONT_CARE", newSViv(Enquire::DONT_CARE) );
 
         newCONSTSUB( mHvStash, "DB_OPEN", newSViv(DB_OPEN) );
         newCONSTSUB( mHvStash, "DB_CREATE", newSViv(DB_CREATE) );

@@ -127,6 +127,19 @@ Enquire::register_match_decoder(name, mdecider)
     CODE:   
         THIS->register_match_decider(name, mdecider);
 
+void
+Enquire::set_docid_order(order)
+	int order    
+    CODE:
+	THIS->set_docid_order(static_cast<Enquire::docid_order>(order));
+
+void 
+Enquire::set_weighting_scheme(weight_)
+	Weight *  weight_
+    CODE:
+	THIS->set_weighting_scheme( *weight_);
+
+	
 string
 Enquire::get_description()
 

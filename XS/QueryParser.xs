@@ -32,13 +32,32 @@ QueryParser::set_database(database)
 	THIS->set_database( *database );
 
 Query *
-QueryParser::parse_query(q)
+QueryParser::parse_query(q, flags = 7)
     string q
+    int flags
     CODE:
-	RETVAL = new Query();
-	*RETVAL = THIS->parse_query(q);
+    	try {
+		RETVAL = new Query();
+		*RETVAL = THIS->parse_query(q,flags);
+	} catch ( ... ) {
+	    croak("Error occured in queryparser.");
+	}
     OUTPUT:
 	RETVAL
+
+void
+QueryParser::add_prefix(field, prefix)
+    string field
+    string prefix
+    CODE:
+	THIS->add_prefix( field,prefix );
+
+void
+QueryParser::add_boolean_prefix(field, prefix)
+    string field
+    string prefix
+    CODE:
+	THIS->add_boolean_prefix( field,prefix );
 
 void
 QueryParser::DESTROY()

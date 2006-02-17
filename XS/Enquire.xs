@@ -11,10 +11,17 @@ Enquire::new(databases)
         RETVAL
 
 void
-Enquire::set_query_object(query)
+Enquire::set_query1(query)
     Query *     query
     CODE:
-        THIS->set_query(*query);
+	THIS->set_query(*query);
+
+void
+Enquire::set_query2(query, len)
+    Query *     query
+    termcount   len
+    CODE:
+	THIS->set_query(*query, len);
 
 Query *
 Enquire::get_query();
@@ -58,6 +65,20 @@ Enquire::set_sorting(sort_key, sort_bands, sort_by_relevance = NO_INIT)
         } else {
 	    THIS->set_sorting(sort_key, sort_bands);
         }
+
+void
+Enquire::set_sort_by_relevance()
+
+void
+Enquire::set_sort_by_value(sort_key, ascending = NO_INIT)
+    valueno	sort_key
+    bool	ascending
+    CODE:
+	if (items == 3) { /* items includes the hidden this pointer */
+	    THIS->set_sort_by_value(sort_key, ascending);
+	} else {
+	    THIS->set_sort_by_value(sort_key);
+	}
 
 void
 Enquire::set_bias(bias_weight, bias_halflife)
@@ -139,17 +160,6 @@ Enquire::set_weighting_scheme(weight_)
     CODE:
 	THIS->set_weighting_scheme( *weight_);
 
-void
-Enquire::set_sort_by_value(sort_key, asc)
-    valueno    sort_key
-    int         asc
-    CODE:
-        if (items == 3) {
-            THIS->set_sort_by_value(sort_key,asc);
-        } else {
-            THIS->set_sort_by_value(sort_key);
-        }
-			
 	
 string
 Enquire::get_description()

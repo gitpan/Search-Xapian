@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use Carp;
 
+use UNIVERSAL qw( isa );
+
 require Exporter;
 require DynaLoader;
 
@@ -80,7 +82,10 @@ use overload '++' => sub { $_[0]->inc() },
              '='  => sub { $_[0]->clone() },
 	     'eq' => sub { $_[0]->equal($_[1]) },
 	     'ne' => sub { $_[0]->nequal($_[1]) },
-             '""' => sub { $_[0]->get_termpos() },
+	     '==' => sub { $_[0]->equal($_[1]) },
+	     '!=' => sub { $_[0]->nequal($_[1]) },
+             '""' => sub { $_[0]->get_description() },
+             '0+' => sub { $_[0]->get_termpos() },
              'fallback' => 1;
 
 sub clone() {
@@ -89,6 +94,24 @@ sub clone() {
   my $copy = new2( $self );
   bless $copy, $class;
   return $copy;
+}
+
+sub equal() {
+  my ($self, $other) = @_;
+  if( isa($other, 'Search::Xapian::PositionIterator') ) {
+    $self->equal1($other);
+  } else {
+    ($self+0) == ($other+0);
+  }
+}
+
+sub nequal() {
+  my ($self, $other) = @_;
+  if( isa($other, 'Search::Xapian::PositionIterator') ) {
+    $self->nequal1($other);
+  } else {
+    ($self+0) != +($other+0);
+  }
 }
 
 

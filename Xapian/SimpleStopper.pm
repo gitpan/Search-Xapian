@@ -1,14 +1,16 @@
-package Search::Xapian::Stopper;
+package Search::Xapian::SimpleStopper;
 
 use 5.006;
 use strict;
 use warnings;
 use Carp;
 
+use Search::Xapian::Stopper;
+
 require Exporter;
 require DynaLoader;
 
-our @ISA = qw(Exporter DynaLoader);
+our @ISA = qw(Exporter DynaLoader Search::Xapian::Stopper);
 
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
@@ -22,21 +24,19 @@ our @EXPORT = qw( );
 
 # Preloaded methods go here.
 
-sub new() {
-  my $class = shift;
-  my $stopper;
-  my $invalid_args;
-  if( scalar(@_) == 0 ) {
-    $stopper = new1();
-  } else {
-    $stopper = new2(@_);
-  }
-  if( $invalid_args ) {
-    Carp::carp( "USAGE: $class->new(), $class->new(\@words)" );
-    exit;
-  }
-  bless $stopper, $class;
-  return $stopper;
+#use overload '='  => sub { $_[0]->clone() },
+#             'fallback' => 1;
+
+sub new {
+    my $class = shift;
+    my $stopper = new0();
+
+    bless $stopper, $class;
+    foreach (@_) {
+	$stopper->add($_);
+    }
+
+    return $stopper;
 }
 
 1;

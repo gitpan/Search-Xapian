@@ -47,8 +47,9 @@ newXsv(op, ...);
         for( int i = 1; i <= items; i++ ) {
             SV *sv = ST (i);
 	    if( SvOK(sv) && SvPOK(sv) ) {
-		string term = SvPV_nolen(sv);
-	        terms.push_back(term);
+		STRLEN len;
+		const char * ptr = SvPV(sv, len);
+	        terms.push_back(string(ptr, len));
 	    }
         }
 	try {
@@ -89,7 +90,7 @@ TermIterator *
 Query::get_terms_begin()
     CODE:
         RETVAL = new TermIterator();
-        *RETVAL = THIS->get_terms_end();
+        *RETVAL = THIS->get_terms_begin();
     OUTPUT:
         RETVAL
 

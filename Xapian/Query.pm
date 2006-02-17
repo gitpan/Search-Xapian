@@ -19,22 +19,12 @@ our @EXPORT_OK = ( );
 
 our @EXPORT = qw( );
 
-
 # Preloaded methods go here.
 
-use overload '='  => sub { $_[0]->clone() },
-             '""' => sub { $_[0]->get_description() }, # FIXME: perhaps unwise?
+use overload '""' => sub { $_[0]->get_description() }, # FIXME: perhaps unwise?
              'fallback' => 1;
 
-sub clone {
-  my $self = shift;
-  my $class = ref( $self );
-  my $copy = new2( $self );
-  bless $copy, $class;
-  return $copy;
-}
-
-sub new {
+sub new() {
   my $class = shift;
   my $query;
   my $invalid_args;

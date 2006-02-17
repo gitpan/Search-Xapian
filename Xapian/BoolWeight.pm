@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use Carp;
 
+use Search::Xapian::Weight;
+
 require DynaLoader;
 
 our @ISA = qw( DynaLoader Search::Xapian::Weight);

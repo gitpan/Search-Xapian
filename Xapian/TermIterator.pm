@@ -23,7 +23,6 @@ our @EXPORT = qw( );
 
 Search::Xapian::TermIterator - Iterate over sets of terms.
 
-
 =head1 DESCRIPTION
 
 This object represents a stream of terms. It overloads ++ for

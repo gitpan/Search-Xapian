@@ -59,5 +59,11 @@ QueryParser::add_boolean_prefix(field, prefix)
     CODE:
 	THIS->add_boolean_prefix( field,prefix );
 
+void 
+QueryParser::set_stemmer( stemmer)
+    Stem * stemmer
+    CODE:
+    THIS->set_stemmer( *stemmer );
+
 void
 QueryParser::DESTROY()

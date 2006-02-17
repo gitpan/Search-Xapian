@@ -11,6 +11,16 @@ new1(term);
         RETVAL
 
 Query *
+new1weight(term, wqf, pos);
+    string	term
+    termcount	wqf
+    termpos	pos
+    CODE:
+	RETVAL = new Query(term, wqf, pos);
+    OUTPUT:
+	RETVAL
+
+Query *
 new2sv(op, subq);
     int		op
     string	subq
@@ -79,7 +89,7 @@ TermIterator *
 Query::get_terms_begin()
     CODE:
         RETVAL = new TermIterator();
-        *RETVAL = THIS->get_terms_begin();
+        *RETVAL = THIS->get_terms_end();
     OUTPUT:
         RETVAL
 
@@ -87,7 +97,7 @@ TermIterator *
 Query::get_terms_end()
     CODE:
         RETVAL = new TermIterator();
-        *RETVAL = THIS->get_terms_begin();
+        *RETVAL = THIS->get_terms_end();
     OUTPUT:
         RETVAL
 

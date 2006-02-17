@@ -23,7 +23,6 @@ our @EXPORT = qw( );
 
 Search::Xapian::PositionIterator - Iterate over sets of positions.
 
-
 =head1 DESCRIPTION
 
 This iterator represents a stream of positions for a term. It overloads 

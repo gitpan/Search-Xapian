@@ -21,7 +21,7 @@ our @EXPORT = qw( );
 
 =head1 NAME
 
-Xapian::Search::Database - Search database object
+Search::Xapian::Document - Search database object
 
 =head1 DESCRIPTION
 

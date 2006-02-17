@@ -1,4 +1,4 @@
-package Search::Xapian::BM25;
+package Search::Xapian::BoolWeight;
 
 use 5.006;
 use strict;

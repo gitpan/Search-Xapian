@@ -16,9 +16,6 @@ t/parser.t
 t/search.t
 t/tied.t
 typemap
-Xapian.bs
-Xapian.c
-Xapian.o
 Xapian.pm
 Xapian.xs
 Xapian/BM25Weight.pm

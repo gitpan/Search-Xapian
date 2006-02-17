@@ -23,12 +23,12 @@ our @EXPORT = qw( );
 
 =head1 NAME
 
-Xapian::Search::Database - Search database object
+Search::Xapian::Database - Search database object
 
 =head1 DESCRIPTION
 
 This class represents a Xapian database for searching. See 
-L<Xapian::WriteableDatabase> for an object suitable for indexing.
+L<Search::Xapian::WriteableDatabase> for an object suitable for indexing.
 To perform searches, this class works with the L<Search::Xapian::Query>
 object.
 

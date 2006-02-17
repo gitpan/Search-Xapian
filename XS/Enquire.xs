@@ -139,6 +139,17 @@ Enquire::set_weighting_scheme(weight_)
     CODE:
 	THIS->set_weighting_scheme( *weight_);
 
+void
+Enquire::set_sort_by_value(sort_key, asc)
+    valueno    sort_key
+    int         asc
+    CODE:
+        if (items == 3) {
+            THIS->set_sort_by_value(sort_key,asc);
+        } else {
+            THIS->set_sort_by_value(sort_key);
+        }
+			
 	
 string
 Enquire::get_description()

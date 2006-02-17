@@ -23,7 +23,6 @@ our @EXPORT = qw( );
 
 Search::Xapian::PostingIterator - Iterate over sets of documents.
 
-
 =head1 DESCRIPTION
 
 This object represents a stream of results for a term. It overloads ++ for

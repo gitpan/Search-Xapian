@@ -1,5 +1,5 @@
 MANIFEST			This list of files
-META.yml
+MANIFEST.SKIP
 README
 Changes
 Makefile.PL
@@ -67,3 +67,4 @@ t/search.t
 t/tied.t
 
 examples/simplesearch.pl
+META.yml                                 Module meta-data (added by MakeMaker)

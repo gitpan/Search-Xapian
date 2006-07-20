@@ -1,3 +1,5 @@
+// Disable any deprecation warnings for Xapian methods/functions/classes.
+ #define XAPIAN_DEPRECATED(D) D
 #include <xapian.h>
 #include <string>
 #include <vector>
@@ -84,7 +86,7 @@ INCLUDE: XS/PositionIterator.xs
 INCLUDE: XS/ValueIterator.xs
 INCLUDE: XS/WritableDatabase.xs
 INCLUDE: XS/Weight.xs
- 
+
 
 BOOT:
     {
@@ -108,10 +110,12 @@ BOOT:
         newCONSTSUB( mHvStash, "ENQ_DESCENDING", newSViv(Enquire::DESCENDING) );
         newCONSTSUB( mHvStash, "ENQ_ASCENDING", newSViv(Enquire::ASCENDING) );
         newCONSTSUB( mHvStash, "ENQ_DONT_CARE", newSViv(Enquire::DONT_CARE) );
- 
+
         newCONSTSUB( mHvStash, "FLAG_BOOLEAN", newSViv(QueryParser::FLAG_BOOLEAN) );
         newCONSTSUB( mHvStash, "FLAG_PHRASE", newSViv(QueryParser::FLAG_PHRASE) );
         newCONSTSUB( mHvStash, "FLAG_LOVEHATE", newSViv(QueryParser::FLAG_LOVEHATE) );
+	newCONSTSUB( mHvStash, "FLAG_BOOLEAN_ANY_CASE", newSViv(QueryParser::FLAG_BOOLEAN_ANY_CASE) );
+	newCONSTSUB( mHvStash, "FLAG_WILDCARD", newSViv(QueryParser::FLAG_WILDCARD) );
 
         newCONSTSUB( mHvStash, "STEM_NONE", newSViv(QueryParser::STEM_NONE) );
         newCONSTSUB( mHvStash, "STEM_SOME", newSViv(QueryParser::STEM_SOME) );

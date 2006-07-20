@@ -21,13 +21,14 @@ our @EXPORT = qw( );
 
 =head1 NAME 
 
-Search::Xapian::PostingIterator - Iterate over sets of documents.
+Search::Xapian::PostingIterator - Iterate over the list of documents indexed
+by a term.
 
 =head1 DESCRIPTION
 
-This object represents a stream of results for a term. It overloads ++ for
-incrementing the iterator, or you can explicitly call the inc method.
-This class also overloads 'eq',ne, and "" (stringification)
+This iterator represents a stream of documents indexed by a term. It overloads
+++ for advancing the iterator, or you can explicitly call the inc method.
+This class also overloads 'eq', 'ne', '==', '!=', and "" (stringification).
 
 =head1 METHODS
 
@@ -35,18 +36,18 @@ This class also overloads 'eq',ne, and "" (stringification)
 
 =item new 
 
-Constructor. Defaults to a uninitialized iterator.
+Constructor. Defaults to an uninitialized iterator.
 
 =item clone
 
 =item inc
 
-Increase the iterator by one. (Called implictly by '++' overloading )
+Advance the iterator by one. (Called implictly by '++' overloading).
 
 =item skip_to <tname>
 
-Skip the iterator to term tname, or the first term after tname if tname 
-isn't in the list of terms being iterated. 
+Skip the iterator to term tname, or the first term after tname if tname
+isn't in the list of terms being iterated.
 
 =item get_docid
 
@@ -76,20 +77,18 @@ database, at a greater performance cost.
 =item equal <term>
 
 Checks if a term is the same as this term. Also overloaded to the 'eq'
-operator.
+and '==' operators.
 
 =item nequal <term>
 
-Checks if a term is dfferent from this term. Also overloaded to the 'ne'
-operator.
-=item 
+Checks if a term is different from this term. Also overloaded to the 'ne'
+and '!=' operators.
 
 =item get_description
 
-Returns a string describing this object. 
+Returns a string describing this object.  (for introspection)
 
 =cut
-
 
 # Preloaded methods go here.
 
@@ -99,7 +98,8 @@ use overload '++' => sub { $_[0]->inc() },
 	     'ne' => sub { $_[0]->nequal($_[1]) },
 	     '==' => sub { $_[0]->equal($_[1]) },
 	     '!=' => sub { $_[0]->nequal($_[1]) },
-             '""' => sub { $_[0]->get_docid() },
+             '""' => sub { $_[0]->get_description() },
+             '0+' => sub { $_[0]->get_docid() },
              'fallback' => 1;
 
 sub clone() {
@@ -109,6 +109,25 @@ sub clone() {
   bless $copy, $class;
   return $copy;
 }
+
+sub equal() {
+  my ($self, $other) = @_;
+  if( isa($other, 'Search::Xapian::PostingIterator') ) {
+    $self->equal1($other);
+  } else {
+    ($self+0) == ($other+0);
+  }
+}
+
+sub nequal() {
+  my ($self, $other) = @_;
+  if( isa($other, 'Search::Xapian::PostingIterator') ) {
+    $self->nequal1($other);
+  } else {
+    ($self+0) != ($other+0);
+  }
+}
+
 
 sub new() {
   my $class = shift;
@@ -130,3 +149,11 @@ sub new() {
 }
 
 1;
+
+=back
+
+=head1 SEE ALSO
+
+L<Search::Xapian>,L<Search::Xapian::Database>
+
+=cut

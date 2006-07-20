@@ -57,14 +57,16 @@ our %EXPORT_TAGS = (
                                  DB_CREATE_OR_OVERWRITE
                                  ) ],
                     'enq_order' => [ qw(
- 				 ENQ_DESCENDING
- 				 ENQ_ASCENDING
- 				 ENQ_DONT_CARE
-                                   ) ],
+				 ENQ_DESCENDING
+				 ENQ_ASCENDING
+				 ENQ_DONT_CARE
+				   ) ],
                     'qpflags' => [ qw(
 				 FLAG_BOOLEAN
 				 FLAG_PHRASE
 				 FLAG_LOVEHATE
+				 FLAG_BOOLEAN_ANY_CASE
+				 FLAG_WILDCARD
                                  ) ],
                     'qpstem' => [ qw(
 				 STEM_NONE
@@ -84,7 +86,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
 
-our $VERSION = '0.9.2.4';
+our $VERSION = '0.9.6.0';
 
 bootstrap Search::Xapian $VERSION;
 
@@ -151,12 +153,12 @@ could rapidly become redundant.
 Apologies to those of you considering using this module. For the time
 being, I would suggest garnering what you can from the tests and
 examples provided, or reading through the Xapian documentation on
-http://www.xapian.org/, notably the API documentation at
-http://www.xapian.org/docs/apidoc/html/annotated.html
+L<http://www.xapian.org/>, notably the API documentation at
+L<http://www.xapian.org/docs/apidoc/html/annotated.html>.
 
 If you encounter problems, email either me or preferably the
 Xapian-discuss mailing list (which I am on - subscription details can
-be found on the Xapian web site).
+be found on the Xapian web site L<http://www.xapian.org/lists.php>).
 
 =head2 EXPORT
 
@@ -176,11 +178,12 @@ Create a new database, fail if database exists.
 
 =item DB_CREATE_OR_OPEN
 
-open the existing database, without destorying data, or create new.
+Open an existing database, without destroying data, or create a new
+database if one doesn't already exist.
 
 =item DB_CREATE_OR_OVERWRITE
 
-overwrite database if it exists
+Overwrite database if it exists.
 
 =back
 
@@ -190,7 +193,7 @@ overwrite database if it exists
 
 =item OP_AND
 
-Match if both subqueries are satisfied
+Match if both subqueries are satisfied.
 
 =item OP_OR
 
@@ -214,8 +217,8 @@ Like OP_AND, but only weight using the left query.
 
 =item OP_NEAR
 
-Match if the words are near eachother. The window should be specified, as
-a parameter to C<Search::Xapian::Query::Query>. but it defaults to the 
+Match if the words are near each other. The window should be specified, as
+a parameter to C<Search::Xapian::Query::Query>, but it defaults to the 
 number of terms in the list.
 
 =item OP_PHRASE
@@ -228,9 +231,72 @@ Select an elite set from the subqueries, and perform a query with these combined
 
 =back
 
+=head1 :qpflags
+
+=over 4
+
+=item FLAG_BOOLEAN
+
+Support AND, OR, etc and bracketted subexpressions.
+
+=item FLAG_LOVEHATE
+
+Support + and -.
+
+=item FLAG_PHRASE
+
+Support quoted phrases.
+
+=item FLAG_BOOLEAN_ANY_CASE
+
+Support AND, OR, etc even if they aren't in ALLCAPS.
+
+=item FLAG_WILDCARD
+
+Support right truncation (e.g. Xap*).
+
+=back
+
+=head1 :qpstem
+
+=over 4
+
+=item STEM_ALL
+
+Stem all terms.
+
+=item STEM_NONE
+
+Don't stem any terms.
+
+=item STEM_SOME
+
+Stem some terms, in a manner compatible with Omega (capitalised words aren't
+stemmed, and get an 'R' prefix).
+
+=back
+
+=head1 :enq_order
+
+=over 4
+
+=item ENQ_ASCENDING
+
+docids sort in ascending order (default)
+
+=item ENQ_DESCENDING
+
+docids sort in descending order
+
+=item ENQ_DONT_CARE
+
+docids sort in whatever order is most efficient for the backend
+
+=back
+
 =head1 :standard
 
-Standard is db + ops
+Standard is db + ops + qpflags + qpstem
 
 =head1 TODO
 
@@ -242,13 +308,14 @@ Error handling for all methods liable to generate them.
 
 =item Documentation
 
-Brief descriptions of classes, possibly just adapted from Xapian docs.
+Add POD documentation for all classes, where possible just adapted from Xapian
+docs.
 
 =item Unwrapped classes
 
 The following Xapian classes are not yet wrapped:
 Error (and subclasses), ErrorHandler, ExpandDecider (and subclasses),
-MatchDecider, Weight (and subclasses).
+MatchDecider, TradWeight, user-defined weight classes.
 
 =item Unwrapped methods
 
@@ -256,9 +323,7 @@ The following methods are not yet wrapped:
 Enquire::get_eset(...) with more than two arguments,
 Enquire::get_mset(...) with more than two arguments,
 Enquire::register_match_decider(...) with one argument,
-Enquire::set_weighting_scheme(const Weight &weight);
-Query::Query(tname, ...); with more than one argument,
-Query itor ctor optional "parameter" parameter,
+Query ctor optional "parameter" parameter,
 Remote::open(...),
 static Stem::get_available_languages().
 
@@ -266,6 +331,8 @@ We wrap ESet::back(), MSet::swap() and MSet::operator[](), but not
 MSet::back(), ESet::swap(), ESet::operator[]().
 
 Tie MSet and ESet to allow them to just be used as lists?
+
+=back
 
 =head1 CREDITS
 

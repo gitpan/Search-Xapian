@@ -116,14 +116,35 @@ Enquire::set_bias(bias_weight, bias_halflife)
         THIS->set_bias(bias_weight, bias_halflife);
 
 MSet *
-Enquire::get_mset(first, maxitems)
+Enquire::get_mset1(first, maxitems, checkatleast = NO_INIT, rset = NO_INIT, func = NO_INIT)
     doccount    first
     doccount    maxitems
+    doccount    checkatleast
+    RSet *	rset
+    SV *	func
     CODE:
-        RETVAL = new MSet();
-        *RETVAL = THIS->get_mset(first, maxitems);
+	RETVAL = new MSet();
+	switch (items) { /* items includes the hidden this pointer */
+	    case 3:
+		*RETVAL = THIS->get_mset(first, maxitems);
+		break;
+	    case 4:
+		*RETVAL = THIS->get_mset(first, maxitems, checkatleast);
+		break;
+	    case 5:
+		*RETVAL = THIS->get_mset(first, maxitems, checkatleast, rset);
+		break;
+	    case 6: {
+		perlMatchDecider d = perlMatchDecider(func);
+		*RETVAL = THIS->get_mset(first, maxitems, checkatleast, rset,
+					 &d);
+		break;
+	    }
+	    default:
+		croak("Bad parameter count for get_mset1");
+	}
     OUTPUT:
-        RETVAL
+	RETVAL
 
 ESet *
 Enquire::get_eset(maxitems, rset)

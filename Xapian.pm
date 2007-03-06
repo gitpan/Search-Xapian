@@ -87,7 +87,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
 
-our $VERSION = '0.9.9.1';
+our $VERSION = '0.9.10.0';
 
 bootstrap Search::Xapian $VERSION;
 
@@ -316,13 +316,12 @@ docs.
 
 The following Xapian classes are not yet wrapped:
 Error (and subclasses), ErrorHandler, ExpandDecider (and subclasses),
-MatchDecider, user-defined weight classes.
+user-defined weight classes.
 
 =item Unwrapped methods
 
 The following methods are not yet wrapped:
 Enquire::get_eset(...) with more than two arguments,
-Enquire::get_mset(...) with more than two arguments,
 Enquire::register_match_decider(...) with one argument,
 Query ctor optional "parameter" parameter,
 Remote::open(...),

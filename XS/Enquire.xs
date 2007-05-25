@@ -26,8 +26,7 @@ Enquire::set_query2(query, len)
 Query *
 Enquire::get_query();
     CODE:
-        RETVAL = new Query();
-        *RETVAL = THIS->get_query();
+        RETVAL = new Query(THIS->get_query());
     OUTPUT:
         RETVAL
 
@@ -44,12 +43,6 @@ Enquire::set_docid_order(order)
         THIS->set_docid_order(static_cast<Enquire::docid_order>(order));
 
 void
-Enquire::set_sort_forward(sort_forward)
-    bool        sort_forward
-    CODE:
-        THIS->set_sort_forward(sort_forward);
-
-void
 Enquire::set_cutoff(percent_cutoff, weight_cutoff = NO_INIT)
     percent     percent_cutoff
     weight      weight_cutoff
@@ -58,18 +51,6 @@ Enquire::set_cutoff(percent_cutoff, weight_cutoff = NO_INIT)
             THIS->set_cutoff(percent_cutoff, weight_cutoff);
         } else {
             THIS->set_cutoff(percent_cutoff);
-        }
-
-void
-Enquire::set_sorting(sort_key, sort_bands, sort_by_relevance = NO_INIT)
-    valueno     sort_key
-    int         sort_bands
-    bool	sort_by_relevance
-    CODE:
-        if (items == 4) { /* items includes the hidden this pointer */
-	    THIS->set_sorting(sort_key, sort_bands, sort_by_relevance);
-        } else {
-	    THIS->set_sorting(sort_key, sort_bands);
         }
 
 void
@@ -108,13 +89,6 @@ Enquire::set_sort_by_relevance_then_value(sort_key, ascending = NO_INIT)
 	    THIS->set_sort_by_relevance_then_value(sort_key);
 	}
 
-void
-Enquire::set_bias(bias_weight, bias_halflife)
-    weight      bias_weight
-    time_t      bias_halflife
-    CODE:
-        THIS->set_bias(bias_weight, bias_halflife);
-
 MSet *
 Enquire::get_mset1(first, maxitems, checkatleast = NO_INIT, rset = NO_INIT, func = NO_INIT)
     doccount    first
@@ -123,26 +97,37 @@ Enquire::get_mset1(first, maxitems, checkatleast = NO_INIT, rset = NO_INIT, func
     RSet *	rset
     SV *	func
     CODE:
-	RETVAL = new MSet();
+	MSet mset;
 	switch (items) { /* items includes the hidden this pointer */
 	    case 3:
-		*RETVAL = THIS->get_mset(first, maxitems);
+		mset = THIS->get_mset(first, maxitems);
 		break;
 	    case 4:
-		*RETVAL = THIS->get_mset(first, maxitems, checkatleast);
+		mset = THIS->get_mset(first, maxitems, checkatleast);
 		break;
 	    case 5:
-		*RETVAL = THIS->get_mset(first, maxitems, checkatleast, rset);
+		mset = THIS->get_mset(first, maxitems, checkatleast, rset);
 		break;
 	    case 6: {
 		perlMatchDecider d = perlMatchDecider(func);
-		*RETVAL = THIS->get_mset(first, maxitems, checkatleast, rset,
-					 &d);
+		mset = THIS->get_mset(first, maxitems, checkatleast, rset, &d);
 		break;
 	    }
 	    default:
 		croak("Bad parameter count for get_mset1");
 	}
+	RETVAL = new MSet(mset);
+    OUTPUT:
+	RETVAL
+
+MSet *
+Enquire::get_mset2(first, maxitems, func)
+    doccount    first
+    doccount    maxitems
+    SV *	func
+    CODE:
+	perlMatchDecider d = perlMatchDecider(func);
+	RETVAL = new MSet(THIS->get_mset(first, maxitems, 0, NULL, &d));
     OUTPUT:
 	RETVAL
 
@@ -151,16 +136,14 @@ Enquire::get_eset(maxitems, rset)
     doccount    maxitems
     RSet *      rset
     CODE:
-        RETVAL = new ESet();
-        *RETVAL = THIS->get_eset(maxitems, *rset);
+        RETVAL = new ESet(THIS->get_eset(maxitems, *rset));
     OUTPUT:
         RETVAL
 
 TermIterator *
 Enquire::get_matching_terms_begin1(docid did)
     CODE:
-        RETVAL = new TermIterator();
-        *RETVAL = THIS->get_matching_terms_begin(did);
+        RETVAL = new TermIterator(THIS->get_matching_terms_begin(did));
     OUTPUT:
         RETVAL
 
@@ -168,16 +151,14 @@ TermIterator *
 Enquire::get_matching_terms_begin2(it)
         MSetIterator *        it
     CODE:
-        RETVAL = new TermIterator();
-        *RETVAL = THIS->get_matching_terms_begin(* it);
+        RETVAL = new TermIterator(THIS->get_matching_terms_begin(* it));
     OUTPUT:
         RETVAL
 
 TermIterator *
 Enquire::get_matching_terms_end1(docid did)
     CODE:
-        RETVAL = new TermIterator();
-        *RETVAL = THIS->get_matching_terms_end(did);
+        RETVAL = new TermIterator(THIS->get_matching_terms_end(did));
     OUTPUT:
         RETVAL
 
@@ -185,8 +166,7 @@ TermIterator *
 Enquire::get_matching_terms_end2(it)
         MSetIterator *  it
     CODE:
-        RETVAL = new TermIterator();
-        *RETVAL = THIS->get_matching_terms_end(* it);
+        RETVAL = new TermIterator(THIS->get_matching_terms_end(* it));
     OUTPUT:
         RETVAL
 

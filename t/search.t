@@ -6,8 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test::More;
-use Devel::Peek;
-BEGIN { plan tests => 79 };
+BEGIN { plan tests => 86 };
 use Search::Xapian qw(:ops);
 
 #########################
@@ -70,12 +69,19 @@ ok( $match++, "match set iterator can increment" );
 isnt( $match, $matches->begin(), "match set iterator increments correctly" );
 ok( $match->get_docid(), "document id returned ok" );
 ok( $match->get_percent(), "percent relevance returned ok" );
+is( $match->get_percent(), $matches->convert_to_percent($match->get_weight()),
+	"converting a weight to a percentage works" );
+is( $match->get_percent(), $matches->convert_to_percent($match),
+	"converting an MSetIterator to a percentage works" );
 
 my $doc;
 ok( $doc = $match->get_document(), "documents retrievable" );
 ok( $doc->get_data(), "data retrievable" );
 
-for (2 .. $matches->size()) { $match++; }
+ok( $match--, "match set iterator can decrement" );
+is( $match, $matches->begin(), "match set iterator decrements correctly" );
+
+for (1 .. $matches->size()) { $match++; }
 is( $match, $matches->end(), "match set returns correct endpoint");
 
 my $rset;
@@ -93,12 +99,18 @@ is( $matches3->size, $matches->size, "rset doesn't change mset size" );
 ok( $matches3 = $enq->get_mset(0, 10, 11, $rset), "get_mset with check_at_least and rset" );
 is( $matches3->size, $matches->size, "rset and check_at_least don't change mset size" );
 
+# This was generating a warning converting "0" to an RSet object:
+ok( $matches3 = $enq->get_mset(0, 10, sub { return 1; }), "get_mset with matchdecider" );
+
 my $eset;
 ok( $eset = $enq->get_eset( 10, $rset ), "can get expanded terms set" );
 is( $eset->size(), 1, "expanded terms set of correct size" );
 my $eit;
 ok( $eit = $eset->begin(), "expanded terms set iterator retuns ok" );
 is( $eit->get_termname(), 'one', "expanded terms set contains correct terms");
+is( ++$eit, $eset->end(), "eset iterator reaches ESet::end() ok" );
+--$eit;
+is( $eit->get_termname(), 'one', "eset iterator decrement works ok" );
 
 # try an empty mset - this was giving begin != end
 my ($noquery, $nomatches);

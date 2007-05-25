@@ -1,5 +1,5 @@
 // Disable any deprecation warnings for Xapian methods/functions/classes.
- #define XAPIAN_DEPRECATED(D) D
+// #define XAPIAN_DEPRECATED(D) D (not currently required).
 #include <xapian.h>
 #include <string>
 #include <vector>
@@ -71,7 +71,7 @@ class perlMatchDecider : public Xapian::MatchDecider {
 	    SvREFCNT_dec(callback);
 	}
 
-	int operator()(const Xapian::Document &doc) const {
+	bool operator()(const Xapian::Document &doc) const {
 	    dSP;
 	    Document *pdoc;
 
@@ -128,6 +128,7 @@ INCLUDE: XS/QueryParser.xs
 INCLUDE: XS/SimpleStopper.xs
 INCLUDE: XS/Stem.xs
 INCLUDE: XS/Stopper.xs
+INCLUDE: XS/TermGenerator.xs
 INCLUDE: XS/TermIterator.xs
 INCLUDE: XS/TradWeight.xs
 INCLUDE: XS/PostingIterator.xs
@@ -136,6 +137,9 @@ INCLUDE: XS/ValueIterator.xs
 INCLUDE: XS/WritableDatabase.xs
 INCLUDE: XS/Weight.xs
 
+INCLUDE: XS/DateValueRangeProcessor.xs
+INCLUDE: XS/NumberValueRangeProcessor.xs
+INCLUDE: XS/StringValueRangeProcessor.xs
 
 BOOT:
     {
@@ -149,6 +153,7 @@ BOOT:
         newCONSTSUB( mHvStash, "OP_FILTER", newSViv(Query::OP_FILTER) );
         newCONSTSUB( mHvStash, "OP_NEAR", newSViv(Query::OP_NEAR) );
         newCONSTSUB( mHvStash, "OP_PHRASE", newSViv(Query::OP_PHRASE) );
+        newCONSTSUB( mHvStash, "OP_VALUE_RANGE", newSViv(Query::OP_VALUE_RANGE) );
         newCONSTSUB( mHvStash, "OP_ELITE_SET", newSViv(Query::OP_ELITE_SET) );
 
         newCONSTSUB( mHvStash, "DB_OPEN", newSViv(DB_OPEN) );
@@ -165,6 +170,8 @@ BOOT:
         newCONSTSUB( mHvStash, "FLAG_LOVEHATE", newSViv(QueryParser::FLAG_LOVEHATE) );
 	newCONSTSUB( mHvStash, "FLAG_BOOLEAN_ANY_CASE", newSViv(QueryParser::FLAG_BOOLEAN_ANY_CASE) );
 	newCONSTSUB( mHvStash, "FLAG_WILDCARD", newSViv(QueryParser::FLAG_WILDCARD) );
+	newCONSTSUB( mHvStash, "FLAG_PURE_NOT", newSViv(QueryParser::FLAG_PURE_NOT) );
+	newCONSTSUB( mHvStash, "FLAG_PARTIAL", newSViv(QueryParser::FLAG_PARTIAL) );
 
         newCONSTSUB( mHvStash, "STEM_NONE", newSViv(QueryParser::STEM_NONE) );
         newCONSTSUB( mHvStash, "STEM_SOME", newSViv(QueryParser::STEM_SOME) );

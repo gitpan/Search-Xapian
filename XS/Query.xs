@@ -39,11 +39,23 @@ new2obj(op, subq);
         RETVAL
 
 Query *
+new4range(op, valno, start, end);
+    int		op
+    valueno	valno
+    string	start
+    string	end
+    CODE:
+        RETVAL = new Query( (Query::op) op, valno, start, end );
+    OUTPUT:
+        RETVAL
+
+Query *
 newXsv(op, ...);
     int		op
     PREINIT:
         vector<string> terms;
     CODE:
+        terms.reserve(items);
         for( int i = 1; i <= items; i++ ) {
             SV *sv = ST (i);
 	    if( SvOK(sv) && SvPOK(sv) ) {
@@ -67,6 +79,7 @@ newXobj(op, ...);
     PREINIT:
         vector<Query> queries;
     CODE:
+        queries.reserve(items);
         for( int i = 1; i <= items; i++ ) {
             SV *sv = ST (i);
 	    if( sv_isobject(sv) ) {
@@ -89,24 +102,19 @@ Query::get_length()
 TermIterator *
 Query::get_terms_begin()
     CODE:
-        RETVAL = new TermIterator();
-        *RETVAL = THIS->get_terms_begin();
+        RETVAL = new TermIterator(THIS->get_terms_begin());
     OUTPUT:
         RETVAL
 
 TermIterator *
 Query::get_terms_end()
     CODE:
-        RETVAL = new TermIterator();
-        *RETVAL = THIS->get_terms_end();
+        RETVAL = new TermIterator(THIS->get_terms_end());
     OUTPUT:
         RETVAL
 
 bool
 Query::empty()
-
-bool
-Query::is_empty()
 
 string
 Query::get_description()

@@ -58,6 +58,8 @@ WriteMakefile(
     # 'OBJECT'		=> '$(O_FILES)', # link all the C files too
     'XSOPT'             => '-C++',
     'TYPEMAPS'          => ['perlobject.map','typemap'],
+    # Add "make check" as alias for "make test".
+    'depend'		=> { 'check' => 'test' },
 );
 
 my $VERSION = "unknown";
@@ -70,7 +72,8 @@ while (<F>) {
 }
 close F;
 
-if ($VERSION !~ /^\Q$xver\E(?:\..*)?$/) {
+my ($BASEVERSION) = $VERSION =~ /^([0-9]+\.[0-9]+\.[0-9]+)/;
+if ($xver !~ /^\Q$BASEVERSION\E(?:_svn[0-9]+)?$/) {
     warn "Warning: Xapian version $xver may be incompatible with Search::Xapian $VERSION\n";
 }
 

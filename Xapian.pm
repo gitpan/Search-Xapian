@@ -16,6 +16,7 @@ use Search::Xapian::PostingIterator;
 use Search::Xapian::Query;
 use Search::Xapian::QueryParser;
 use Search::Xapian::RSet;
+use Search::Xapian::TermGenerator;
 use Search::Xapian::TermIterator;
 use Search::Xapian::ValueIterator;
 use Search::Xapian::WritableDatabase;
@@ -49,6 +50,7 @@ our %EXPORT_TAGS = (
                                   OP_FILTER
                                   OP_NEAR
                                   OP_PHRASE
+				  OP_VALUE_RANGE
                                   OP_ELITE_SET
                                  ) ],
                     'db' => [ qw(
@@ -68,6 +70,8 @@ our %EXPORT_TAGS = (
 				 FLAG_LOVEHATE
 				 FLAG_BOOLEAN_ANY_CASE
 				 FLAG_WILDCARD
+				 FLAG_PURE_NOT
+				 FLAG_PARTIAL
                                  ) ],
                     'qpstem' => [ qw(
 				 STEM_NONE
@@ -87,7 +91,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
 
-our $VERSION = '0.9.10.0';
+our $VERSION = '1.0.0.0';
 
 bootstrap Search::Xapian $VERSION;
 
@@ -228,7 +232,11 @@ Match as a phrase (All words in order).
 
 =item OP_ELITE_SET
 
-Select an elite set from the subqueries, and perform a query with these combined as an OR query. 
+Select an elite set from the subqueries, and perform a query with these combined as an OR query.
+
+=item OP_VALUE_RANGE
+
+Filter by a range test on a document value.
 
 =back
 
@@ -255,6 +263,24 @@ Support AND, OR, etc even if they aren't in ALLCAPS.
 =item FLAG_WILDCARD
 
 Support right truncation (e.g. Xap*).
+
+=item FLAG_PURE_NOT
+
+Allow queries such as 'NOT apples'.
+
+These require the use of a list of all documents in the database
+which is potentially expensive, so this feature isn't enabled by
+default.
+
+=item FLAG_PARTIAL
+
+Enable partial matching.
+
+Partial matching causes the parser to treat the query as a
+"partially entered" search.  This will automatically treat the
+final word as a wildcarded match, unless it is followed by
+whitespace, to produce more stable results from interactive
+searches.
 
 =back
 
@@ -327,10 +353,9 @@ Query ctor optional "parameter" parameter,
 Remote::open(...),
 static Stem::get_available_languages().
 
-We wrap ESet::back(), MSet::swap() and MSet::operator[](), but not
-MSet::back(), ESet::swap(), ESet::operator[]().
-
-Tie MSet and ESet to allow them to just be used as lists?
+We wrap MSet::swap() and MSet::operator[](), but not ESet::swap(),
+ESet::operator[]().  Is swap actually useful?  Should we instead tie MSet
+and ESet to allow them to just be used as lists?
 
 =back
 

@@ -11,7 +11,7 @@ require Exporter;
 require DynaLoader;
 
 our @ISA = qw(Exporter DynaLoader);
-# Items to export into callers namespace by default. Note: do not export
+# Items to export into caller's namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
@@ -50,14 +50,15 @@ sub get_mset {
     my $type = ref( $_[2] );
     if ( $type eq 'CODE' ) {
       # get_mset(first, max, matchdecider) [perl extra]
-      splice @_, 2, 0, (0, 0);
-    } elsif ( $type eq 'Search::Xapian::RSet' ) {
+      return $self->get_mset2(@_);
+    }
+    if ( $type eq 'Search::Xapian::RSet' ) {
       # get_mset(first, max, rset)
-      splice @_, 2, 0, (0);
+      splice @_, 2, 0, (0); # insert checkatleast
     }
   } elsif( $nargs == 4 && ref( $_[3] ) eq 'CODE' ) {
     # get_mset(first, max, rset, matchdecider)
-    splice @_, 2, 0, (0);
+    splice @_, 2, 0, (0); # insert checkatleast
   }
   return $self->get_mset1( @_ );
 }
@@ -163,10 +164,6 @@ search - i.e. set_weighting_scheme(Search::Xapian::BoolWeight->new())
 - with set_docid_order(ENQ_DESCENDING) is a very efficient
 way to perform "sort by date, newest first".
 
-=item set_sort_forward <sort_forward>
-
-Deprecated - use set_docid_order instead.
-
 =item set_cutoff <percent_cutoff> [<weight_cutoff>]
 
 =item set_sort_by_relevance
@@ -216,14 +213,6 @@ is better; if ascending is false, lower is better.
 ascending - If true, documents values which sort higher by
 string compare are better.  If false, the sort order
 is reversed.  (default true)
-
-=item set_sorting <sort_key> <sort_bands> [<sort_by_relevance>]
-
-Deprecated - use set_sort_by_* instead.
-
-=item set_bias <bias_weight>
-
-=item set_bias <bias_weight> <bias_halflife>
 
 =item get_mset
 

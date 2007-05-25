@@ -1,5 +1,25 @@
 Revision history for Perl extension Search::Xapian.
 
+1.0.0.0  Sat May 26 00:41:07 BST 2007
+	[Changes contributed by Olly Betts]
+	- Wrap new TermGenerator class.
+	- Wrap new QueryParser flags FLAG_PURE_NOT and FLAG_PARTIAL.
+ 	- Wrap new Query op OP_VALUE_RANGE and associated constructor.
+	- Wrap ValueRangeProcessor and subclasses, and
+	  QueryParser::add_valuerangeprocessor().
+	- Removed wrappers for deprecated features which have now been removed
+	  from the C++ API.
+	- Fix small memory leaks in various methods when the C++ method throws
+	  an exception.
+	- MSet::convert_to_percentage() now actually works (and added feature
+	  tests to search.t to make sure it keeps working).
+	- Test WritableDatabase::add_value() in t/index.t.
+	- Test OP_VALUE_RANGE in new t/valuerange.t.
+	- Test ValueRangeProcessor and subclasses in t/parser.t.
+	- More tests for ESetIterator.
+	- Feature tests for new TermGenerator class.
+	- Add "make check" as an alias for "make test".
+
 0.9.10.0  Tue Mar 06 02:27:02 2007
 	[Changes contributed by Rusty Conover]
 	- Wrap MatchDecider and make it usable with Enquire::get_mset()

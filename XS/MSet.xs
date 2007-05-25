@@ -16,7 +16,7 @@ new2(other);
         RETVAL = new MSet(*other);
     OUTPUT:
         RETVAL
- 
+
 void
 MSet::fetch1(begin, end)
     MSetIterator *	begin
@@ -39,13 +39,17 @@ percent
 MSet::convert_to_percent1(wt)
     weight	wt
     CODE:
-        THIS->convert_to_percent(wt);
+        RETVAL = THIS->convert_to_percent(wt);
+    OUTPUT:
+	RETVAL
 
 percent
 MSet::convert_to_percent2(it)
     MSetIterator *	it
     CODE:
-        THIS->convert_to_percent(*it);
+        RETVAL = THIS->convert_to_percent(*it);
+    OUTPUT:
+	RETVAL
 
 doccount
 MSet::get_termfreq(tname)
@@ -96,32 +100,28 @@ MSet::swap(other)
 MSetIterator *
 MSet::begin()
     CODE:
-        RETVAL = new MSetIterator();
-        *RETVAL = THIS->begin();
+        RETVAL = new MSetIterator(THIS->begin());
     OUTPUT:
         RETVAL
 
 MSetIterator *
 MSet::end()
     CODE:
-        RETVAL = new MSetIterator();
-        *RETVAL = THIS->end();
+        RETVAL = new MSetIterator(THIS->end());
     OUTPUT:
         RETVAL
 
 MSetIterator *
 MSet::back()
     CODE:
-        RETVAL = new MSetIterator();
-        *RETVAL = THIS->back();
+        RETVAL = new MSetIterator(THIS->back());
     OUTPUT:
         RETVAL
 
 MSetIterator *
 MSet::get_msetiterator(doccount i)
     CODE:
-        RETVAL = new MSetIterator();
-        *RETVAL = (*THIS)[i];
+        RETVAL = new MSetIterator((*THIS)[i]);
     OUTPUT:
         RETVAL
 

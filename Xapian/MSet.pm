@@ -9,7 +9,7 @@ require Exporter;
 require DynaLoader;
 
 our @ISA = qw(Exporter DynaLoader);
-# Items to export into callers namespace by default. Note: do not export
+# Items to export into caller's namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
@@ -75,7 +75,7 @@ sub convert_to_percent() {
   my $invalid_args;
   if( scalar(@_) == 1 ) {
     my $arg = shift;
-    my $arg_class = shift;
+    my $arg_class = ref $arg;
     if( !$arg_class ) {
       return $self->convert_to_percent1($arg);
     } elsif( $arg_class eq 'Search::Xapian::MSetIterator' ) {

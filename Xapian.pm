@@ -91,7 +91,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw( );
 
 
-our $VERSION = '1.0.0.0';
+our $VERSION = '1.0.1.0';
 
 bootstrap Search::Xapian $VERSION;
 
@@ -343,6 +343,9 @@ docs.
 The following Xapian classes are not yet wrapped:
 Error (and subclasses), ErrorHandler, ExpandDecider (and subclasses),
 user-defined weight classes.
+
+We don't yet wrap Xapian::Query::MatchAll, Xapian::Query::MatchNothing,
+or Xapian::BAD_VALUENO.
 
 =item Unwrapped methods
 

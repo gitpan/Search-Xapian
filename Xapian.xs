@@ -1,5 +1,5 @@
 // Disable any deprecation warnings for Xapian methods/functions/classes.
-// #define XAPIAN_DEPRECATED(D) D (not currently required).
+#define XAPIAN_DEPRECATED(D) D
 #include <xapian.h>
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@ class PerlStopper : public Stopper {
     public:
 	PerlStopper(SV * obj) { SV_stopper_ref = newRV_inc(obj); }
 	~PerlStopper() { sv_2mortal(SV_stopper_ref); }
-	bool operator()(const string &term) {
+	bool operator()(const string &term) const {
 	    dSP ;
 
 	    ENTER ;

@@ -35,7 +35,7 @@ sub clone() {
 sub new() {
   my $class = shift;
   my $qp = new0();
-  
+
   bless $qp, $class;
   $qp->set_database(@_) if scalar(@_) == 1;
 
@@ -65,8 +65,8 @@ a whole new syntax.
   $qp->set_stemmer(new Search::Xapian::Stem("english"));
   $qp->set_default_op(OP_AND);
 
-  $database->enquire($qp->parse_query('a word OR two NEAR "a phrase" NOT (too difficult) +eh'));
- 
+  $database->enquire($qp->parse_query('a NEAR word OR "a phrase" NOT (too difficult) +eh'));
+
 =head1 METHODS
 
 =over 4
@@ -81,7 +81,8 @@ Set the Search::Xapian::Stem object to be used for stemming query terms.
 
 =item set_stemming_strategy <strategy>
 
-Set the stemming strategy.  Valid values are STEM_ALL, STEM_SOME, STEM_NONE.
+Set the stemming strategy.  Valid values are C<STEM_ALL>, C<STEM_SOME>,
+C<STEM_NONE>.
 
 =item set_stopper <stopper>
 
@@ -103,14 +104,15 @@ terms exist in some situations.
 
 =item parse_query <query_string> [<flags>]
 
-parses the query string according to the rules defined in the query parser
-documentation below. Allows you to specify certain flags to modify the
+Parses the query string according to the rules defined in the query parser
+documentation below. You can specify certain flags to modify the
 searching behaviour:
 
-  FLAG_BOOLEAN=1, FLAG_PHRASE=2, FLAG_LOVEHATE=4,
-  FLAG_BOOLEAN_ANY_CASE=8, FLAG_WILDCARD = 16
+  FLAG_BOOLEAN, FLAG_PHRASE, FLAG_LOVEHATE, FLAG_BOOLEAN_ANY_CASE,
+  FLAG_WILDCARD, FLAG_PURE_NOT, FLAG_PARTIAL
 
-default flags are FLAG_PHRASE, FLAG_BOOLEAN and FLAG_LOVEHATE
+To specify multiple flags, "or" them together (with C<|>).  The
+default flags are C<FLAG_PHRASE|FLAG_BOOLEAN|FLAG_LOVEHATE>
 
 =item add_prefix <field> <prefix>
 
@@ -122,24 +124,26 @@ to the same prefix (so you can e.g. make title: and subject: aliases for each
 other).
 
 Parameters:
-field 	The user visible field name
-prefix 	The term prefix to map this to
+field	The user visible field name
+prefix	The term prefix to map this to
 
 =item add_boolean_prefix <field> prefix
 
-Add a boolean term prefix allowing the user to restrict a search with a 
-boolean filter specified in the free text query.  E.g. 
-$p->add_boolean_prefix("site", "H");
+Add a boolean term prefix allowing the user to restrict a search with a
+boolean filter specified in the free text query.  E.g.
 
-Allows the user to restrict a search with site:xapian.org which will be 
-converted to Hxapian.org combined with any probabilistic query with OP_FILTER.
+  $p->add_boolean_prefix("site", "H");
 
-Multiple fields can be mapped to the same prefix (so you can e.g. make site: 
+Allows the user to restrict a search with site:xapian.org which will be
+converted to Hxapian.org combined with any probabilistic query with
+C<OP_FILTER>.
+
+Multiple fields can be mapped to the same prefix (so you can e.g. make site:
 and domain: aliases for each other).
 
 Parameters:
-field 	The user visible field name
-prefix 	The term prefix to map this to
+field	The user visible field name
+prefix	The term prefix to map this to
 
 =item stoplist_begin
 
@@ -151,7 +155,7 @@ prefix 	The term prefix to map this to
 
 =item get_description
 
-Returns a string describing this object.  (for introspection)
+Returns a string describing this object.
 
 =back
 

@@ -5,19 +5,47 @@ use strict;
 use warnings;
 use Carp;
 
-require Exporter;
 require DynaLoader;
 
-our @ISA = qw(Exporter DynaLoader);
-# Items to export into caller's namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
+our @ISA = qw(DynaLoader);
 
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our @EXPORT_OK = ( );
+# Preloaded methods go here.
 
-our @EXPORT = qw( );
+# In a new thread, copy objects of this class to unblessed, undef values.
+sub CLONE_SKIP { 1 }
+
+use overload '='  => sub { $_[0]->clone() },
+             'fallback' => 1;
+
+sub clone() {
+  my $self = shift;
+  my $class = ref( $self );
+  my $copy = new2( $self );
+  bless $copy, $class;
+  return $copy;
+}
+sub new() {
+  my $class = shift;
+  my $document;
+  my $invalid_args;
+  if( scalar(@_) == 0 ) {
+    $document = new1();
+  } elsif( scalar(@_) == 1 and ref( $_[1] ) eq $class ) {
+    $document = new2(@_);
+  } else {
+    $invalid_args = 1;
+  }
+  if( $invalid_args ) {
+    Carp::carp( "USAGE: $class->new(), $class->new(\$document)" );
+    exit;
+  }
+  bless $document, $class;
+  return $document;
+}
+
+1;
+
+__END__
 
 =head1 NAME
 
@@ -30,8 +58,6 @@ This class represents a document in a Xapian database.
 =head1 METHODS
 
 =over 4
-
-=cut
 
 =item new
 
@@ -116,41 +142,6 @@ values in this document.
 =item get_description
 
 Document description (for introspection)
-
-=cut
-
-# Preloaded methods go here.
-
-use overload '='  => sub { $_[0]->clone() },
-             'fallback' => 1;
-
-sub clone() {
-  my $self = shift;
-  my $class = ref( $self );
-  my $copy = new2( $self );
-  bless $copy, $class;
-  return $copy;
-}
-sub new() {
-  my $class = shift;
-  my $document;
-  my $invalid_args;
-  if( scalar(@_) == 0 ) {
-    $document = new1();
-  } elsif( scalar(@_) == 1 and ref( $_[1] ) eq $class ) {
-    $document = new2(@_);
-  } else {
-    $invalid_args = 1;
-  }
-  if( $invalid_args ) {
-    Carp::carp( "USAGE: $class->new(), $class->new(\$document)" );
-    exit;
-  }
-  bless $document, $class;
-  return $document;
-}
-
-1;
 
 =back
 

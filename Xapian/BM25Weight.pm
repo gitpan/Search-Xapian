@@ -11,6 +11,9 @@ require DynaLoader;
 
 our @ISA = qw( DynaLoader Search::Xapian::Weight);
 
+# In a new thread, copy objects of this class to unblessed, undef values.
+sub CLONE_SKIP { 1 }
+
 sub new {
   my $class = shift;
   my $weight;
@@ -28,6 +31,8 @@ sub new {
 }
 
 1;
+
+__END__
 
 =head1 NAME
 
@@ -53,4 +58,3 @@ Constructor. Either takes no parameters, or the 4 BM25 parameters
 L<Search::Xapian>,L<Search::Xapian::Enquire>
 
 =cut
-

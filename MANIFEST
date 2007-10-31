@@ -4,6 +4,8 @@ README
 Changes
 Makefile.PL
 
+makehtmldocs
+
 typemap
 perlobject.map
 
@@ -24,7 +26,7 @@ Xapian/PostingIterator.pm
 Xapian/QueryParser.pm
 Xapian/Query.pm
 Xapian/RSet.pm
-Xapian/Stem.pod
+Xapian/Stem.pm
 Xapian/SimpleStopper.pm
 Xapian/Stopper.pm
 Xapian/TermGenerator.pm
@@ -73,6 +75,7 @@ t/index.t
 t/parser.t
 t/search.t
 t/termgenerator.t
+t/thread.t
 t/tied.t
 t/valuerange.t
 

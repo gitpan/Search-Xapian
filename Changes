@@ -1,5 +1,34 @@
 Revision history for Perl extension Search::Xapian.
 
+1.0.4.0  Wed Oct 31 23:18:02 GMT 2007
+	[Changes contributed by Olly Betts]
+	- Add all the POD pages to the "see also" on the main POD page.
+	- Fix typos and improve wording thoughout the POD documentation.
+	- Add POD documentation for ValueIterator.
+	- Makefile.PL now accepts XAPIAN_CONFIG and CXX on the command line
+	  (like autoconf configure scripts) and values specified here are
+	  persistent across automatic reruns, so promote this usage over
+	  environmental variables.
+	- Compiling with GCC 4.2 gives many "deprecated conversion from string
+	  constant to 'char*'" warnings.  Most are from XS-generated code, but
+	  fix the small number which aren't.
+	- Make Search::Xapian work with 'use threads;' by adding 'sub
+	  CLONE_SKIP { 1 }' to all the classes (this requires Perl >= 5.8.7
+	  to work, but has no effect on older versions).  Using CLONE_SKIP
+	  means that Xapian objects aren't copied to subthreads, so the wrapped
+	  C++ objects don't get destroyed more than once.  Thanks to Ron Kass
+	  for suggesting this change.
+	- Add testcase thread.t to check that threaded use works as expected
+	  under Perl 5.8.7.
+	- BoolWeight objects are now blessed as class BoolWeight rather than
+	  class Weight.
+	- Fix test parser.t to match the fixed behaviour of STEM_ALL.
+	- Cleaned up unnecessary 'require Exporter;' and 'use Carp;'.
+	- Move the POD documentation to the end of the pm files and insert
+	  __END__ before them.
+	- A script to generate interlinked HTML documentation has been added
+	  (called makehtmldocs).
+
 1.0.3.0  Sat Sep 29 13:26:32 BST 2007
 	[Changes contributed by Olly Betts]
 	- Wrap Database::get_metadata() and WritableDatabase::set_metadata().

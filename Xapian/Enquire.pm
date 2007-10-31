@@ -7,21 +7,14 @@ use Carp;
 
 use Search::Xapian::MSet::Tied;
 
-require Exporter;
 require DynaLoader;
 
-our @ISA = qw(Exporter DynaLoader);
-# Items to export into caller's namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our @EXPORT_OK = ( );
-
-our @EXPORT = qw( );
+our @ISA = qw(DynaLoader);
 
 # Preloaded methods go here.
+
+# In a new thread, copy objects of this class to unblessed, undef values.
+sub CLONE_SKIP { 1 }
 
 sub set_query {
   my $self = shift;
@@ -99,6 +92,10 @@ sub get_matching_terms_end {
   Carp::carp( "USAGE: \$enquire->get_matching_terms_end(\$docid) or \$enquire->get_matching_terms_end(\$msetiterator)" );
   exit;
 }
+
+1;
+
+__END__
 
 =head1 NAME
 
@@ -235,5 +232,3 @@ Returns a description of the object (for introspection).
 L<Search::Xapian::Query>, L<Search::Xapian::Database>
 
 =cut
-
-1;

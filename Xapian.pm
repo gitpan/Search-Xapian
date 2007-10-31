@@ -3,7 +3,8 @@ package Search::Xapian;
 use 5.006;
 use strict;
 use warnings;
-use Carp;
+
+our $VERSION = '1.0.4.0';
 
 use Search::Xapian::Database;
 use Search::Xapian::Document;
@@ -16,6 +17,7 @@ use Search::Xapian::PostingIterator;
 use Search::Xapian::Query;
 use Search::Xapian::QueryParser;
 use Search::Xapian::RSet;
+use Search::Xapian::Stem;
 use Search::Xapian::TermGenerator;
 use Search::Xapian::TermIterator;
 use Search::Xapian::ValueIterator;
@@ -90,9 +92,6 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw( );
 
-
-our $VERSION = '1.0.3.0';
-
 bootstrap Search::Xapian $VERSION;
 
 # Preloaded methods go here.
@@ -155,9 +154,15 @@ can read the Xapian C++ API documentation at
 L<http://www.xapian.org/docs/apidoc/html/annotated.html> for details of
 these.  Alternatively, take a look at the code in the examples and tests.
 
-If you encounter problems, email either me or preferably the
-Xapian-discuss mailing list (which I am on - subscription details can
-be found on the Xapian web site L<http://www.xapian.org/lists.php>).
+If you want to use Search::Xapian and the threads module together, make
+sure you're using Search::Xapian >= 1.0.4.0 and Perl >= 5.8.7.  As of 1.0.4.0,
+Search::Xapian uses CLONE_SKIP to make sure that the perl wrapper objects
+aren't copied to new threads - without this the underlying C++ objects can get
+destroyed more than once.
+
+If you encounter problems, or have any comments, suggestions, patches, etc
+please email the Xapian-discuss mailing list (details of which can be found at
+L<http://www.xapian.org/lists.php>).
 
 =head2 EXPORT
 
@@ -370,6 +375,22 @@ Alex Bowley E<lt>kilinrax@cpan.orgE<gt>
 
 =head1 SEE ALSO
 
-L<perl>. L<xapian>.
+L<Search::Xapian::BM25Weight>,
+L<Search::Xapian::BoolWeight>,
+L<Search::Xapian::Database>,
+L<Search::Xapian::Document>,
+L<Search::Xapian::Enquire>,
+L<Search::Xapian::PositionIterator>,
+L<Search::Xapian::PostingIterator>,
+L<Search::Xapian::QueryParser>,
+L<Search::Xapian::Stem>,
+L<Search::Xapian::TermGenerator>,
+L<Search::Xapian::TermIterator>,
+L<Search::Xapian::TradWeight>,
+L<Search::Xapian::ValueIterator>,
+L<Search::Xapian::Weight>,
+L<Search::Xapian::WritableDatabase>,
+and
+L<http://www.xapian.org/>.
 
 =cut

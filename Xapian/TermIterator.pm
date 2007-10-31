@@ -5,86 +5,14 @@ use strict;
 use warnings;
 use Carp;
 
-require Exporter;
 require DynaLoader;
 
-our @ISA = qw(Exporter DynaLoader);
-# Items to export into caller's namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our @EXPORT_OK = ( );
-
-our @EXPORT = qw( );
-
-=head1 NAME 
-
-Search::Xapian::TermIterator - Iterate over sets of terms.
-
-=head1 DESCRIPTION
-
-This object represents a stream of terms. It overloads ++ for
-advancing the iterator, or you can explicitly call the inc method.
-This class also overloads 'eq',ne, and "" (stringification)
-
-=head1 METHODS
-
-=over 4
-
-=item new 
-
-Constructor. Defaults to a uninitialized iterator.
-
-=item clone
-
-=item inc
-
-Advance the iterator by one. (Called implictly by '++' overloading )
-
-=item skip_to <tname>
-
-Skip the iterator to term tname, or the first term after tname if tname 
-isn't in the list of terms being iterated. 
-
-=item get_termname
-
-Get the name of the current term.
-
-=item get_wdf
-
-Return the wdf of the current term (if meaningful). 
-
-=item get_termfreq
-
-Return the term frequency of the current term (if meaningful). 
-
-=item positionlist_begin
-
-Return L<Search::Xapian:::PositionIterator> pointing to start of positionlist for current term. 
-
-=item positionlist_end
-
-Return L<Search::Xapian:::PositionIterator> pointing to end of positionlist for current term. 
-
-=item get_description
-
-Returns a string describing this object. 
-
-=item equal <termiterator>
-
-Checks if a termiterator is the same as this termiterator. Also overloaded as
-the 'eq' and '!=' operators.
-
-=item nequal <termiterator>
-
-Checks if a termiterator is different from this termiterator. Also overloaded
-as the 'ne' and '!=' operators.
-
-=cut
+our @ISA = qw(DynaLoader);
 
 # Preloaded methods go here.
+
+# In a new thread, copy objects of this class to unblessed, undef values.
+sub CLONE_SKIP { 1 }
 
 use overload '++' => sub { $_[0]->inc() },
              '='  => sub { $_[0]->clone() },
@@ -123,6 +51,72 @@ sub new() {
 }
 
 1;
+
+__END__
+
+=head1 NAME 
+
+Search::Xapian::TermIterator - Iterate over sets of terms.
+
+=head1 DESCRIPTION
+
+This object represents a stream of terms. It overloads C<++> for
+advancing the iterator, or you can explicitly call the C<inc> method.
+This class also overloads C<eq>, C<ne>, C<==>, C<!=>, and C<"">
+(stringification).
+
+=head1 METHODS
+
+=over 4
+
+=item new 
+
+Constructor. Defaults to a uninitialized iterator.
+
+=item clone
+
+=item inc
+
+Advance the iterator by one. (Called implictly by C<++> overloading )
+
+=item skip_to <tname>
+
+Skip the iterator to term tname, or the first term after tname if tname 
+isn't in the list of terms being iterated. 
+
+=item get_termname
+
+Get the name of the current term.
+
+=item get_wdf
+
+Return the wdf of the current term (if meaningful). 
+
+=item get_termfreq
+
+Return the term frequency of the current term (if meaningful). 
+
+=item positionlist_begin
+
+Return L<Search::Xapian::PositionIterator> pointing to start of positionlist for current term. 
+
+=item positionlist_end
+
+Return L<Search::Xapian::PositionIterator> pointing to end of positionlist for current term. 
+
+=item get_description
+
+Returns a string describing this object. 
+
+=item equal <termiterator>
+
+Checks if a termiterator is the same as this termiterator. Also overloaded as
+the C<eq> and C<!=> operators.
+
+=item nequal <termiterator>
+
+Checks if a termiterator is different from this termiterator. Also overloaded
+as the C<ne> and C<!=> operators.
 
 =back
 

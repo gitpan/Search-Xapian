@@ -4,7 +4,9 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '1.0.4.0';
+our $VERSION = '1.0.5.0';
+
+use Exporter 'import';
 
 use Search::Xapian::Database;
 use Search::Xapian::Document;
@@ -12,6 +14,7 @@ use Search::Xapian::ESet;
 use Search::Xapian::ESetIterator;
 use Search::Xapian::MSet;
 use Search::Xapian::MSetIterator;
+use Search::Xapian::MultiValueSorter;
 use Search::Xapian::PositionIterator;
 use Search::Xapian::PostingIterator;
 use Search::Xapian::Query;
@@ -30,10 +33,9 @@ use Search::Xapian::TradWeight;
 use Search::Xapian::SimpleStopper;
 use Search::Xapian::PerlStopper;
 
-require Exporter;
 require DynaLoader;
 
-our @ISA = qw(Exporter DynaLoader);
+our @ISA = qw(DynaLoader);
 
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
@@ -74,6 +76,10 @@ our %EXPORT_TAGS = (
 				 FLAG_WILDCARD
 				 FLAG_PURE_NOT
 				 FLAG_PARTIAL
+				 FLAG_SPELLING_CORRECTION
+				 FLAG_SYNONYM
+				 FLAG_AUTO_SYNONYMS
+				 FLAG_AUTO_MULTIWORD_SYNONYMS
                                  ) ],
                     'qpstem' => [ qw(
 				 STEM_NONE
@@ -372,6 +378,10 @@ advice, bugfixes, and wrapper code for the more obscure classes.
 =head1 AUTHOR
 
 Alex Bowley E<lt>kilinrax@cpan.orgE<gt>
+
+Please report any bugs/suggestions to E<lt>xapian-discuss@lists.xapian.orgE<gt>
+or use the Xapian bug tracker L<http://www.xapian.org/bugs/>.  Please do
+NOT use the CPAN bug tracker or mail any of the authors individually.
 
 =head1 SEE ALSO
 

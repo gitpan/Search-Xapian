@@ -6,7 +6,7 @@
 
 use Test;
 use Devel::Peek;
-BEGIN { plan tests => 51 };
+BEGIN { plan tests => 52 };
 use Search::Xapian qw(:standard);
 ok(1); # If we made it this far, we're ok.
 
@@ -93,12 +93,12 @@ $qp->add_valuerangeprocessor( $vrp3 );
 $qp->add_boolean_prefix("test", "XTEST");
 foreach $pair (
     [ 'a..b', 'VALUE_RANGE 3 a b' ],
-    [ '1..12', 'VALUE_RANGE 2 1 12' ],
+    [ '1..12', "VALUE_RANGE 2 \xa0 \xae" ],
     [ '20070201..20070228', 'VALUE_RANGE 1 20070201 20070228' ],
-    [ '$10..20', 'VALUE_RANGE 4 10 20' ],
-    [ '$10..$20', 'VALUE_RANGE 4 10 20' ],
-    [ '12..42kg', 'VALUE_RANGE 5 12 42' ],
-    [ '12kg..42kg', 'VALUE_RANGE 5 12 42' ],
+    [ '$10..20', "VALUE_RANGE 4 \xad \xb1" ],
+    [ '$10..$20', "VALUE_RANGE 4 \xad \xb1" ],
+    [ '12..42kg', "VALUE_RANGE 5 \xae \xb5@" ],
+    [ '12kg..42kg', "VALUE_RANGE 5 \xae \xb5@" ],
     [ '12kg..42', 'VALUE_RANGE 3 12kg 42' ],
     [ '10..$20', 'VALUE_RANGE 3 10 $20' ],
     [ '1999-03-12..2020-12-30', 'VALUE_RANGE 1 19990312 20201230' ],
@@ -110,11 +110,7 @@ foreach $pair (
     ) {
     my ($str, $res) = @{$pair};
     my $query = $qp->parse_query($str);
-    if ($res =~ /^VALUE_RANGE [245] /) {
-	ok( 1 ); # FIXME bodge for now
-    } else {
-	ok( $query->get_description(), "Xapian::Query($res)" );
-    }
+    ok( $query->get_description(), "Xapian::Query($res)" );
 }
 
 $qp = new Search::Xapian::QueryParser();
@@ -133,5 +129,14 @@ foreach $pair (
     my $query = $qp->parse_query($str);
     ok( $query->get_description(), "Xapian::Query($res)" );
 }
+
+# Regression test for Search::Xapian bug fixed in 1.0.5.0.  In 1.0.0.0-1.0.4.0
+# we tried to catch const char * not Xapian::Error, so std::terminate got
+# called.
+$qp = Search::Xapian::QueryParser->new;
+eval {
+    $qp->parse_query('foo other* this AND more', FLAG_BOOLEAN|FLAG_WILDCARD);
+};
+ok( $@ =~ /^Exception: Syntax: <expression> AND <expression> at \S+ line \d+\.$/ );
 
 1;

@@ -21,20 +21,19 @@ new1weight(term, wqf, pos)
 	RETVAL
 
 Query *
-new2sv(op, subq)
-    int		op
-    string	subq
+new3scale(int op, Query * query, double factor)
     CODE:
-        RETVAL = new Query( (Query::op) op, subq );
+        RETVAL = new Query( (Query::op) op, *query, factor );
     OUTPUT:
         RETVAL
 
 Query *
-new2obj(op, subq)
+new3range(op, valno, limit)
     int		op
-    Query *	subq
+    valueno	valno
+    string	limit
     CODE:
-        RETVAL = new Query( (Query::op) op, *subq );
+        RETVAL = new Query( (Query::op) op, valno, limit );
     OUTPUT:
         RETVAL
 
@@ -50,47 +49,27 @@ new4range(op, valno, start, end)
         RETVAL
 
 Query *
-newXsv(op, ...)
-    int		op
-    PREINIT:
-        vector<string> terms;
+newN(int op_, ...)
     CODE:
-        terms.reserve(items);
-        for( int i = 1; i <= items; i++ ) {
-            SV *sv = ST (i);
-	    if( SvOK(sv) && SvPOK(sv) ) {
-		STRLEN len;
-		const char * ptr = SvPV(sv, len);
-	        terms.push_back(string(ptr, len));
-	    }
-        }
+	Query::op op = (Query::op)op_;
 	try {
-            RETVAL = new Query( (Query::op) op, terms.begin(), terms.end() );
-        }
-        catch (const Error &error) {
-            croak( "Exception: %s", error.get_msg().c_str() );
-        }
-    OUTPUT:
-        RETVAL
-
-Query *
-newXobj(op, ...)
-    int		op
-    PREINIT:
-        vector<Query> queries;
-    CODE:
-        queries.reserve(items);
-        for( int i = 1; i <= items; i++ ) {
-            SV *sv = ST (i);
-	    if( sv_isobject(sv) ) {
-		Query *query = (Query*) SvIV((SV*) SvRV(sv));
-	        queries.push_back(*query);
+	    vector<Query> queries;
+	    queries.reserve(items - 1);
+	    for( int i = 1; i < items; i++ ) {
+		SV *sv = ST (i);
+		if (sv_isa(sv, "Search::Xapian::Query")) {
+		    Query *query = (Query*) SvIV((SV*) SvRV(sv));
+		    queries.push_back(*query);
+		} else if ( SvOK(sv) && SvPOK(sv) ) {
+		    STRLEN len;
+		    const char * ptr = SvPV(sv, len);
+		    queries.push_back(Query(string(ptr, len)));
+		} else {
+		    croak( "USAGE: Search::Xapian::Query->new(OP, @TERMS_OR_QUERY_OBJECTS)" );
+		}
 	    }
-        }
-	try {
-            RETVAL = new Query( (Query::op) op, queries.begin(), queries.end() );
-        }
-        catch (const Error &error) {
+            RETVAL = new Query(op, queries.begin(), queries.end());
+        } catch (const Error &error) {
             croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:

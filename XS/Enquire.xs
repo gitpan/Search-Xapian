@@ -94,6 +94,9 @@ Enquire::set_sort_by_key(sorter, ascending = NO_INIT)
     MultiValueSorter * sorter
     bool	ascending
     CODE:
+	// FIXME: no corresponding SvREFCNT_dec(), but a leak seems better than
+	// a SEGV!
+	SvREFCNT_inc(ST(1));
 	if (items == 3) { /* items includes the hidden this pointer */
 	    THIS->set_sort_by_key(sorter, ascending);
 	} else {
@@ -105,6 +108,9 @@ Enquire::set_sort_by_key_then_relevance(sorter, ascending = NO_INIT)
     MultiValueSorter * sorter
     bool	ascending
     CODE:
+	// FIXME: no corresponding SvREFCNT_dec(), but a leak seems better than
+	// a SEGV!
+	SvREFCNT_inc(ST(1));
 	if (items == 3) { /* items includes the hidden this pointer */
 	    THIS->set_sort_by_key_then_relevance(sorter, ascending);
 	} else {
@@ -116,6 +122,9 @@ Enquire::set_sort_by_relevance_then_key(sorter, ascending = NO_INIT)
     MultiValueSorter * sorter
     bool	ascending
     CODE:
+	// FIXME: no corresponding SvREFCNT_dec(), but a leak seems better than
+	// a SEGV!
+	SvREFCNT_inc(ST(1));
 	if (items == 3) { /* items includes the hidden this pointer */
 	    THIS->set_sort_by_relevance_then_key(sorter, ascending);
 	} else {
@@ -202,13 +211,6 @@ Enquire::get_matching_terms_end2(it)
         RETVAL = new TermIterator(THIS->get_matching_terms_end(* it));
     OUTPUT:
         RETVAL
-
-void
-Enquire::register_match_decider(name, mdecider)
-        string          name
-        MatchDecider *  mdecider
-    CODE:
-        THIS->register_match_decider(name, mdecider);
 
 void
 Enquire::set_weighting_scheme(weight_)

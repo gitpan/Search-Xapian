@@ -21,41 +21,31 @@ sub new {
   my $class = shift;
   my $query;
 
-  if( scalar(@_) == 1 ) {
+  if( @_ == 1 ) {
     $query = new1(@_);
   } else {
-    my $op = shift;
-    if( $op !~ /^[-+]?\d+$/ ) {
-      Carp::carp( "new()'s first argument must be an OP when called with more than one argument" );
-    } elsif( $op == 8 ) { # FIXME: 8 is OP_VALUE_RANGE; eliminate hardcoded literal
-      if( scalar(@_) != 3 ) {
-	Carp::carp( "new() must have 4 arguments when OP is OP_VALUE_RANGE" );
-      } else {
-	$query = new4range( $op, @_ );
-      }
-    } elsif( !_all_equal( map { ref } @_ ) ) {
-      Carp::carp( "all of new()'s arguments after the first must be of identical type (either all search terms (scalars) or $class objects)");
-    } else {
-      # remaining arguments are scalars
-      if( !ref($_[0]) ) {
-	scalar(@_) == 1 ?
-	  $query = new2sv($op, @_) :
-	    $query = newXsv($op, @_);
-      }
-      # remaining arguments objects
-      elsif( ref($_[0]) eq $class ) {
-	scalar(@_) == 1 ?
-	  $query = new2obj($op, @_) :
-	    $query = newXobj($op, @_);
-      }
-      else {
-	Carp::carp( "all of new()'s arguments after the first must be search terms (scalars), or $class objects" );
-      }
+    my $op = $_[0];
+    if( $op !~ /^\d+$/ ) {
+	Carp::croak( "USAGE: $class->new('term') or $class->new(OP, <args>)" );
     }
-  }
-  unless( defined $query ) {
-    Carp::carp( "USAGE: $class->new('term'), $class->new(OP, \@terms), $class->new(OP, \@queries), or $class->new(OP_VALUE_RANGE, VALNO, START, END)" );
-    exit;
+    if( $op == 8 ) { # FIXME: 8 is OP_VALUE_RANGE; eliminate hardcoded literal
+      if( @_ != 4 ) {
+	Carp::croak( "USAGE: $class->new(OP_VALUE_RANGE, VALNO, START, END)" );
+      }
+      $query = new4range( @_ );
+    } elsif( $op == 9 ) { # FIXME: OP_SCALE_WEIGHT
+      if( @_ != 3 ) {
+        Carp::croak( "USAGE: $class->new(OP_SCALE_WEIGHT, QUERY, FACTOR)" );
+      }
+      $query = new3scale( @_ );
+    } elsif( $op == 11 || $op == 12 ) { # FIXME: OP_VALUE_GE, OP_VALUE_LE; eliminate hardcoded literals
+      if( @_ != 3 ) {
+        Carp::croak( "USAGE: $class->new(OP_VALUE_[GL]E, VALNO, LIMIT)" );
+      }
+      $query = new3range( @_ );
+    } else {
+      $query = newN( @_ );
+    }
   }
   bless $query, $class;
   return $query;
@@ -76,14 +66,6 @@ sub new_term {
 
   bless $query, $class;
   return $query;
-}
-
-sub _all_equal {
-  my $first = shift;
-  while(@_) {
-    return 0 if $first ne shift;
-  }
-  return 1;
 }
 
 sub get_terms {

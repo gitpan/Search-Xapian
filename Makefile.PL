@@ -9,7 +9,7 @@ $ExtUtils::MakeMaker::Recognized_Att_Keys{XAPIAN_CONFIG} = 1;
 my $builddir;
 
 my $srcdir = $0;
-if ($srcdir =~ s!/.*!!) {
+if ($srcdir =~ s!/[^/]*$!!) {
     chomp($builddir = `pwd`);
     chdir $srcdir;
 }
@@ -74,9 +74,9 @@ my $libsvar = 'LIBS';
 my $libs = `$xapian_config --libs 2> /dev/null`;
 chomp($libs);
 my ($xapian_config_dir) = $xapian_config =~ /^(.*?)[^\/]*$/;
-if ($? || -f "$xapian_config_dir/Makefile") {
+if ($? || -f "${xapian_config_dir}Makefile") {
     # Assume we're being asked to build against an uninstalled xapian-core.
-    my $libtool = "$xapian_config_dir/libtool";
+    my $libtool = "${xapian_config_dir}libtool";
     unless (-x $libtool) {
 	die "You've asked me to link against what appears to be an uninstalled xapian-core tree, but I can't find libtool in that tree\n";
     }
@@ -187,10 +187,10 @@ if (scalar @bad) {
 if (defined $builddir) {
     open M, '>', "$builddir/Makefile~" or die $!;
     print M <<"EOF";
-.DEFAULT:
+all .DEFAULT:
 \t\$(MAKE) -C "$srcdir" \$\@
 
-.PHONY: Search-Xapian-$VERSION.tar.gz
+.PHONY: all Search-Xapian-$VERSION.tar.gz
 
 dist tardist Search-Xapian-$VERSION.tar.gz:
 \t\$(MAKE) -C "$srcdir" \$\@

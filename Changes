@@ -1,6 +1,17 @@
 Revision history for Perl extension Search::Xapian.
 
-1.0.11.0  Sun Mar 15 12:53:20 GMT 2008
+1.0.12.0  Sun Apr 19 11:18:04 GMT 2009
+	[Changes contributed by Olly Betts] 
+	- Add handling of exceptions from Database::get_metadata() and methods
+	  of Enquire which might throw DatabaseModifiedError to address
+	  situation reported in ticket#284.
+	- Skip thread.t testcase if Perl is new enough, but wasn't built with
+	  thread support (reported by Felix Antonius Wilhelm Ostmann).
+	- Fix "fake VPATH" mode to work better.
+	[Changes contributed by Kosei Moriyama]
+	- Add test coverage for more WritableDatabase methods.
+
+1.0.11.0  Sun Mar 15 12:53:20 GMT 2009
 	[Changes contributed by Olly Betts]
 	- Wrap the new FLAG_DEFAULT constant which gives the QueryParser
 	  default flag settings, allowing you to easily add flags to the

@@ -91,10 +91,8 @@ eval {
     # Get the suggested expand terms
     my $eset = $enquire->get_eset(10, $reldocs);
     printf "%i suggested additional terms\n", $eset->size();
-    my $k = $eset->begin();
-    while ($k != $eset->end()) {
+    for my $k ($eset->items()) {
         printf "%s: %f\n", $k->get_termname(), $k->get_weight();
-        ++$k;
     }
 };
 if ($@) {

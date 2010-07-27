@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Search-Xapian
-version:             1.0.21.0
+version:             1.2.2.0
 abstract:            Perl XS frontend to the Xapian C++ search library.
 license:             ~
 author:              

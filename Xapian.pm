@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '1.2.3.0';
+our $VERSION = '1.2.4.0';
 
 use Exporter 'import';
 
@@ -37,6 +37,11 @@ use Search::Xapian::PerlStopper;
 require DynaLoader;
 
 our @ISA = qw(DynaLoader);
+
+# We need to use the RTLD_GLOBAL flag to dlopen() so that other C++
+# modules that link against libxapian.so get the *same* value for all the
+# weak symbols (eg, the exception classes)
+sub dl_load_flags { 0x01 }
 
 # This allows declaration	use Search::Xapian ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK

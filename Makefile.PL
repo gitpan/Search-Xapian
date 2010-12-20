@@ -3,7 +3,9 @@ use strict;
 use Config;
 
 # Suppress warnings about parameters we allow the user to specify.
+$ExtUtils::MakeMaker::Recognized_Att_Keys{CPPFLAGS} = 1;
 $ExtUtils::MakeMaker::Recognized_Att_Keys{CXX} = 1;
+$ExtUtils::MakeMaker::Recognized_Att_Keys{CXXFLAGS} = 1;
 $ExtUtils::MakeMaker::Recognized_Att_Keys{XAPIAN_CONFIG} = 1;
 
 my $builddir;
@@ -21,13 +23,20 @@ if ($srcdir =~ s!/([^/]*)$!!) {
 
 my $xapian_config;
 my $CC;
+my %var = ();
+
+open ARGS, '>', 'makefile-pl-args' or die $!;
 for (@ARGV) {
+    print ARGS $_, "\n";
     if (/^XAPIAN_CONFIG=(.*)/) {
 	$xapian_config = $1;
     } elsif (/^CXX=(.*)/) {
 	$CC = $1;
+    } elsif (/^(C(?:XX|PP)FLAGS)=(.*)/) {
+	$var{$1} = $2;
     }
 }
+close ARGS or die $!;
 
 if (!defined $xapian_config && exists $ENV{XAPIAN_CONFIG}) {
     $xapian_config = $ENV{XAPIAN_CONFIG};
@@ -113,6 +122,9 @@ $CCFLAGS =~ s/(?:^|\s+)-Wdeclaration-after-statement(?:\s+|$)/ /;
 # The generated code causes "variable may be used uninitialized" warnings
 # if Perl was built with -Wall.
 $CCFLAGS =~ s/(^|\s+)-Wall(\s+|$)/$1-Wall -Wno-uninitialized$2/;
+
+$CCFLAGS .= ' ' . $var{CPPFLAGS} if exists $var{CPPFLAGS};
+$CCFLAGS .= ' ' . $var{CXXFLAGS} if exists $var{CXXFLAGS};
 
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.

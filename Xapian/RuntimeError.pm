@@ -17,9 +17,12 @@ Search::Xapian::RuntimeError -  The base class for exceptions indicating errors 
 use 5.006;
 use strict;
 use warnings;
-use Carp;
 
 require DynaLoader;
+
+# For compatibility with XS Search::Xapian < 1.2.3 which still threw strings
+# in some cases.
+use overload '""' => sub { "Exception: ".$_[0]->get_msg };
 
 use Search::Xapian::DatabaseError;
 use Search::Xapian::DocNotFoundError;

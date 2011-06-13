@@ -22,8 +22,8 @@ Document::get_value(valueno valno)
     CODE:
 	try {
 	    RETVAL = THIS->get_value(valno);
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
     OUTPUT:
 	RETVAL
@@ -35,8 +35,8 @@ Document::add_value(valno, value)
     CODE:
 	try {
 	    THIS->add_value(valno, value);
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
 
 void
@@ -44,8 +44,8 @@ Document::remove_value(valueno valno)
     CODE:
 	try {
 	    THIS->remove_value(valno);
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
 
 void
@@ -56,8 +56,8 @@ Document::get_data()
     CODE:
 	try {
 	    RETVAL = THIS->get_data();
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
     OUTPUT:
 	RETVAL
@@ -80,8 +80,8 @@ Document::add_posting(tname, tpos, wdfinc = NO_INIT)
 	    } else {
 		THIS->add_posting(tname, tpos);
 	    }
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
 
 void
@@ -95,8 +95,8 @@ Document::add_term(tname, wdfinc = NO_INIT)
 	    } else {
 		THIS->add_term(tname);
 	    }
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
 
 void
@@ -105,8 +105,8 @@ Document::add_boolean_term(tname)
     CODE:
 	try {
 	    THIS->add_boolean_term(tname);
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
 
 void
@@ -121,8 +121,8 @@ Document::remove_posting(tname, tpos, wdfdec = NO_INIT)
             } else {
                 THIS->remove_posting(tname, tpos);
             }
-        } catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+        } catch (...) {
+	    handle_exception();
         }
 
 void
@@ -131,8 +131,8 @@ Document::remove_term(tname)
     CODE:
 	try {
             THIS->remove_term(tname);  
-        } catch (const Error &error) {
-            croak("Exception: %s", error.get_msg().c_str());
+        } catch (...) {
+            handle_exception();
         }
 
 void
@@ -143,8 +143,8 @@ Document::termlist_count()
     CODE:
 	try {
 	    RETVAL = THIS->termlist_count();
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
     OUTPUT:
         RETVAL
@@ -154,8 +154,8 @@ Document::termlist_begin()
     CODE:
 	try {
 	    RETVAL = new TermIterator(THIS->termlist_begin());
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
     OUTPUT:
         RETVAL
@@ -172,8 +172,8 @@ Document::values_count()
     CODE:
 	try {
 	    RETVAL = THIS->values_count();
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
     OUTPUT:
         RETVAL
@@ -183,8 +183,8 @@ Document::values_begin()
     CODE:
 	try {
 	    RETVAL = new ValueIterator(THIS->values_begin());
-	} catch (const Error &error) {
-	    croak("Exception: %s", error.get_msg().c_str());
+	} catch (...) {
+	    handle_exception();
 	}
     OUTPUT:
         RETVAL

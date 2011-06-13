@@ -20,7 +20,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301
 # USA
 
+use 5.006;
 use strict;
+use warnings;
+
 use Search::Xapian (':all');
 
 # We require at least two command line arguments.
@@ -91,10 +94,8 @@ eval {
     # Get the suggested expand terms
     my $eset = $enquire->get_eset(10, $reldocs);
     printf "%i suggested additional terms\n", $eset->size();
-    my $k = $eset->begin();
-    while ($k != $eset->end()) {
+    for my $k ($eset->items()) {
         printf "%s: %f\n", $k->get_termname(), $k->get_weight();
-        ++$k;
     }
 };
 if ($@) {

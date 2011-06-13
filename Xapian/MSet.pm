@@ -5,9 +5,12 @@ use strict;
 use warnings;
 use Carp;
 
+use Search::Xapian::MSet::Tied;
+
+use Tie::Array;
 require DynaLoader;
 
-our @ISA = qw(DynaLoader);
+our @ISA = qw(Tie::Array DynaLoader);
 
 # Preloaded methods go here.
 
@@ -91,9 +94,10 @@ sub items {
   return @array;
 }
 
-sub matches {
-    warn "Search::Xapian::MSet::matches() is deprecated - use Search::Xapian::MSet::items() method instead.\n";
-    return items(@_);
+sub TIEARRAY {
+  my $class = shift;
+  my $eset = shift;
+  return bless $eset, $class;
 }
 
 1;

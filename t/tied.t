@@ -3,11 +3,9 @@
 
 #########################
 
-# change 'tests => 1' to 'tests => last_test_to_print';
-
 use Test;
 use Devel::Peek;
-BEGIN { plan tests => 19 };
+BEGIN { plan tests => 22 };
 use Search::Xapian qw(:ops);
 
 #########################
@@ -35,18 +33,6 @@ ok( $match->get_percent() );
 
 $matches[0] = 34;
 
-# Check that MSet::matches() gives a warning - it's deprecated in favour of
-# MSet::items() - but still works like items() does.
-my $warned = 0;
-my $old_sig_warn = $SIG{'__WARN__'};
-$SIG{'__WARN__'} = sub { ++$warned; };
-ok( @matches = $mset->matches() );
-ok( $warned == 1 );
-$SIG{'__WARN__'} = $old_sig_warn;
-ok( $match = $matches[0] );
-ok( $match->get_docid() );
-ok( $match->get_percent() );
-
 my $doc;
 ok( $doc = $match->get_document() );
 ok( $doc->get_data() );
@@ -55,11 +41,34 @@ ok( exists $matches[1] );
 ok( !exists $matches[10] );
 ok( exists $matches[-1] );
 
+# Test that "tying by hand" still works.
+sub tie_mset {
+    my @a;
+    tie( @a, 'Search::Xapian::MSet::Tied', shift );
+    return @a;
+}
+ok( $mset = $enq->get_mset(0, 1) );
+ok( scalar(tie_mset($mset)) == 1 );
+
 my @ematches;
 ok( @ematches = $enq->matches(0, 2) );
 
 ok( $match = $ematches[0] );
 ok( $match->get_docid() );
 ok( $match->get_percent() );
+
+my $eset;
+my $rset;
+
+ok( $rset = Search::Xapian::RSet->new() );
+$rset->add_document( 1 );
+
+ok( $eset = $enq->get_eset( 10, $rset ) );
+ok( $eset->size() != 0 );
+
+my @eterms;
+ok( @eterms = $eset->items() );
+ok( scalar @eterms == $eset->size() );
+ok( $eterms[0]->get_termname() eq $eset->begin()->get_termname() );
 
 1;

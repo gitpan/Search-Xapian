@@ -17,9 +17,12 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+#undef get_context
 
 using namespace std;
 using namespace Xapian;
+
+extern void handle_exception(void);
 
 /* PerlStopper class
  *
@@ -108,6 +111,47 @@ class perlMatchDecider : public Xapian::MatchDecider {
     }
 };
 
+class perlExpandDecider : public Xapian::ExpandDecider {
+    SV *callback;
+
+  public:
+    perlExpandDecider(SV *func) {
+	callback = newSVsv(func);
+    }
+
+    ~perlExpandDecider() {
+	SvREFCNT_dec(callback);
+    }
+
+    bool operator()(const string &term) const {
+	dSP;
+
+	ENTER;
+	SAVETMPS;
+
+	PUSHMARK(SP);
+
+	XPUSHs(sv_2mortal(newSVpv(term.data(), term.size())));
+
+	PUTBACK;
+
+	int count = call_sv(callback, G_SCALAR);
+
+	SPAGAIN;
+	if (count != 1)
+	    croak("callback function should return 1 value, got %d", count);
+
+	int decide_actual_result = POPi;
+
+	PUTBACK;
+
+	FREETMPS;
+	LEAVE;
+
+	return decide_actual_result;
+    }
+};
+
 MODULE = Search::Xapian		PACKAGE = Search::Xapian
 
 PROTOTYPES: ENABLE
@@ -138,6 +182,7 @@ INCLUDE: XS/Enquire.xs
 INCLUDE: XS/MSet.xs
 INCLUDE: XS/MSetIterator.xs
 INCLUDE: XS/ESet.xs
+INCLUDE: XS/Error.xs
 INCLUDE: XS/ESetIterator.xs
 INCLUDE: XS/RSet.xs
 INCLUDE: XS/MultiValueSorter.xs

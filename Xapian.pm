@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '1.0.23.0';
+our $VERSION = '1.2.6.0';
 
 use Exporter 'import';
 
@@ -12,6 +12,7 @@ use Search::Xapian::Database;
 use Search::Xapian::Document;
 use Search::Xapian::ESet;
 use Search::Xapian::ESetIterator;
+use Search::Xapian::Error;
 use Search::Xapian::MSet;
 use Search::Xapian::MSetIterator;
 use Search::Xapian::MultiValueSorter;
@@ -263,7 +264,7 @@ flags to the default ones.
 
 =item FLAG_BOOLEAN
 
-Support AND, OR, etc and bracketted subexpressions.
+Support AND, OR, etc and bracketed subexpressions.
 
 =item FLAG_LOVEHATE
 
@@ -436,7 +437,8 @@ docs.
 =item Unwrapped classes
 
 The following Xapian classes are not yet wrapped:
-Error (and subclasses), ErrorHandler, ExpandDecider (and subclasses),
+Error (and subclasses), ErrorHandler, standard ExpandDecider subclasses
+(user-defined ones works),
 user-defined weight classes.
 
 We don't yet wrap Xapian::Query::MatchAll, Xapian::Query::MatchNothing,

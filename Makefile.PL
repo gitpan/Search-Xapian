@@ -3,27 +3,19 @@ use strict;
 use Config;
 
 # Suppress warnings about parameters we allow the user to specify.
-$ExtUtils::MakeMaker::Recognized_Att_Keys{CPPFLAGS} = 1;
 $ExtUtils::MakeMaker::Recognized_Att_Keys{CXX} = 1;
-$ExtUtils::MakeMaker::Recognized_Att_Keys{CXXFLAGS} = 1;
 $ExtUtils::MakeMaker::Recognized_Att_Keys{XAPIAN_CONFIG} = 1;
 
 my $builddir;
 
 my $srcdir = $0;
-if ($srcdir =~ s!/([^/]*)$!!) {
-    # Set $0 to be just the leafname.  If we don't, WriteMakefile() reruns this
-    # script for reasons unknown, leading to a seemingly infinite loop
-    # consuming increasing amounts of memory.  With setting $0, it still reruns
-    # this script, but only once.
-    $0 = $1;
+if ($srcdir =~ s!/[^/]*$!!) {
     chomp($builddir = `pwd`);
     chdir $srcdir;
 }
 
 my $xapian_config;
 my $CC;
-my %var = ();
 
 open ARGS, '>', 'makefile-pl-args' or die $!;
 for (@ARGV) {
@@ -32,8 +24,6 @@ for (@ARGV) {
 	$xapian_config = $1;
     } elsif (/^CXX=(.*)/) {
 	$CC = $1;
-    } elsif (/^(C(?:XX|PP)FLAGS)=(.*)/) {
-	$var{$1} = $2;
     }
 }
 close ARGS or die $!;
@@ -79,12 +69,11 @@ END
     exit(0);
 }
 chomp($xver);
-$xver =~ s/.*\s//; # "xapian 1.2.0" -> "1.2.0"
+$xver =~ s/.*\s//; # "xapian 1.0.4" -> "1.0.4"
 
 my $inc = `$xapian_config --cxxflags`;
 chomp($inc);
 
-my @writemakefile_args = ();
 my $libsvar = 'LIBS';
 my $libs = `$xapian_config --libs 2> /dev/null`;
 chomp($libs);
@@ -103,15 +92,8 @@ if ($? || ($xapian_config_dir ne '' && -f "${xapian_config_dir}Makefile")) {
     $libs = `$xapian_config --ltlibs`;
     chomp($libs);
     $libs = {'LDLOADLIBS' => $libs};
-    $LD = "$libtool --tag=CXX --mode=link $CC -avoid-version -module";
-    $LD .= " -rpath \$(PERL_ARCHLIB)/auto/\$(FULLEXT)";
-    $LD .= " -shrext .".$Config{'dlext'};
-    $CC = "$libtool --tag=CXX --mode=compile $CC";
-    push @writemakefile_args, (
-	'OBJ_EXT'	=> '.lo',
-	'DLEXT'		=> 'la',
-	'FULLPERL'	=> '$(PERL) "-I$(INST_ARCHAUTODIR)/.libs"',
-    );
+    $LD = "$libtool --tag=CXX --mode=link $CC -avoid-version -module -no-install";
+    $CC = "$libtool --mode=compile $CC";
 }
 
 # Filter out some gcc options which g++ doesn't support.
@@ -123,12 +105,9 @@ $CCFLAGS =~ s/(?:^|\s+)-Wdeclaration-after-statement(?:\s+|$)/ /;
 # if Perl was built with -Wall.
 $CCFLAGS =~ s/(^|\s+)-Wall(\s+|$)/$1-Wall -Wno-uninitialized$2/;
 
-$CCFLAGS .= ' ' . $var{CPPFLAGS} if exists $var{CPPFLAGS};
-$CCFLAGS .= ' ' . $var{CXXFLAGS} if exists $var{CXXFLAGS};
-
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
-push @writemakefile_args, (
+WriteMakefile(
     'NAME'		=> 'Search::Xapian',
     'VERSION_FROM'	=> 'Xapian.pm', # finds $VERSION
     'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
@@ -142,15 +121,13 @@ push @writemakefile_args, (
     'CCFLAGS'		=> $CCFLAGS,
     'LD'		=> $LD,
     'INC'		=> $inc, # e.g., '-I/usr/include/other'
-    'OBJECT'		=> '$(BASEEXT)$(OBJ_EXT) handle_exception$(OBJ_EXT)',
     'XSOPT'		=> '-C++',
-    # 'typemap' is implicitly added to this list.
-    'TYPEMAPS'		=> ['perlobject.map', 'typemap-errorclasses'],
+    # 'typemap'		is implicitly added to this list.
+    'TYPEMAPS'		=> ['perlobject.map'],
     # Add "make check" as alias for "make test".
     # Make sure that we rebuild the Makefile if the version number changes.
     'depend'		=> { 'check' => 'test', 'Makefile' => 'Xapian.pm' },
 );
-WriteMakefile(@writemakefile_args);
 
 my $VERSION = "unknown";
 open F, "Makefile" or die $!;
@@ -164,8 +141,8 @@ close F;
 
 my ($BASEVERSION) = $VERSION =~ /^([0-9]+\.[0-9]+\.[0-9]+)/;
 if ($xver !~ /^\Q$BASEVERSION\E(?:_svn[0-9]+)?$/) {
-    # We definitely need Xapian 1.2.x.
-    my $no_chance = ($xver !~ /^1\.2\./);
+    # There's no chance that we'll work with xapian-core 0.x.y.
+    my $no_chance = ($xver =~ /^0/);
     my $msg;
     if ($no_chance) {
 	$msg = "Xapian version $xver is incompatible with Search::Xapian $VERSION\n";

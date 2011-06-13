@@ -9,8 +9,9 @@ new1(file, opts)
     CODE:
         try {
 	    RETVAL = new WritableDatabase(file, opts);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -28,8 +29,9 @@ new3()
     CODE:
         try {
 	    RETVAL = new WritableDatabase(InMemory::open());
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -39,18 +41,10 @@ WritableDatabase::flush()
    CODE:
 	try {
             THIS->flush();
-	} catch (...) {
-	    handle_exception();
         }
-
-void
-WritableDatabase::close()
-    CODE:
-	try {
-	    THIS->close();
-	} catch (...) {
-	    handle_exception();
-	}
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
+        }
 
 void
 WritableDatabase::begin_transaction(flushed = NO_INIT)
@@ -62,8 +56,9 @@ WritableDatabase::begin_transaction(flushed = NO_INIT)
 	    } else {
 		THIS->begin_transaction();
 	    }
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 void
@@ -71,8 +66,9 @@ WritableDatabase::commit_transaction()
     CODE:
 	try {
             THIS->commit_transaction();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 void
@@ -80,8 +76,9 @@ WritableDatabase::cancel_transaction()
     CODE:
 	try {
             THIS->cancel_transaction();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 docid
@@ -90,8 +87,9 @@ WritableDatabase::add_document(document)
     CODE:
         try {
 	    RETVAL = THIS->add_document(*document);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -102,8 +100,9 @@ WritableDatabase::delete_document(did)
     CODE:
         try {
 	    THIS->delete_document(did);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 void
@@ -112,8 +111,9 @@ WritableDatabase::delete_document_by_term(unique_term)
     CODE:
         try {
 	    THIS->delete_document(unique_term);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 void
@@ -123,8 +123,9 @@ WritableDatabase::replace_document(did, document)
     CODE:
         try {
 	    THIS->replace_document(did, *document);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 void
@@ -134,8 +135,9 @@ WritableDatabase::replace_document_by_term(unique_term, document)
     CODE:
         try {
 	    THIS->replace_document(unique_term, *document);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 void
@@ -143,8 +145,9 @@ WritableDatabase::reopen()
     CODE:
 	try {
             THIS->reopen();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 string
@@ -152,8 +155,9 @@ WritableDatabase::get_description()
     CODE:
 	try {
             RETVAL = THIS->get_description();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -164,8 +168,9 @@ WritableDatabase::termlist_begin(did)
     CODE:
 	try {
 	    RETVAL = new TermIterator(THIS->termlist_begin(did));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -176,8 +181,9 @@ WritableDatabase::termlist_end(did)
     CODE:
 	try {
 	    RETVAL = new TermIterator(THIS->termlist_end(did));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -189,8 +195,9 @@ WritableDatabase::positionlist_begin(did, term)
     CODE:
 	try {
 	    RETVAL = new PositionIterator(THIS->positionlist_begin(did, term));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -202,8 +209,9 @@ WritableDatabase::positionlist_end(did, term)
     CODE:
 	try {
 	    RETVAL = new PositionIterator(THIS->positionlist_end(did, term));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -214,8 +222,9 @@ WritableDatabase::allterms_begin(prefix = "")
     CODE:
 	try {
 	    RETVAL = new TermIterator(THIS->allterms_begin(prefix));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -226,8 +235,9 @@ WritableDatabase::allterms_end(prefix = "")
     CODE:
 	try {
 	    RETVAL = new TermIterator(THIS->allterms_end(prefix));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -238,8 +248,9 @@ WritableDatabase::postlist_begin(term)
     CODE:
 	try {
 	    RETVAL = new PostingIterator(THIS->postlist_begin(term));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -250,8 +261,9 @@ WritableDatabase::postlist_end(term)
     CODE:
 	try {
 	    RETVAL = new PostingIterator(THIS->postlist_end(term));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -261,8 +273,9 @@ WritableDatabase::get_doccount()
     CODE:
 	try {
             RETVAL = THIS->get_doccount();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -272,8 +285,9 @@ WritableDatabase::get_lastdocid()
     CODE:
 	try {
             RETVAL = THIS->get_lastdocid();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -283,8 +297,9 @@ WritableDatabase::get_avlength()
     CODE:
 	try {
             RETVAL = THIS->get_avlength();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -295,8 +310,9 @@ WritableDatabase::get_termfreq(tname)
     CODE:
 	try {
             RETVAL = THIS->get_termfreq(tname);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -307,8 +323,9 @@ WritableDatabase::term_exists(tname)
     CODE:
 	try {
 	    RETVAL = THIS->term_exists(tname);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -319,8 +336,9 @@ WritableDatabase::get_collection_freq(tname)
     CODE:
 	try {
 	    RETVAL = THIS->get_collection_freq(tname);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -331,8 +349,9 @@ WritableDatabase::get_doclength(did)
     CODE:
 	try {
 	    RETVAL = THIS->get_doclength(did);
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -342,8 +361,9 @@ WritableDatabase::keep_alive()
     CODE:
 	try {
 	    THIS->keep_alive();
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
 
 
@@ -352,8 +372,9 @@ WritableDatabase::get_document(docid did)
     CODE:
 	try {
 	    RETVAL = new Document(THIS->get_document(did));
-	} catch (...) {
-	    handle_exception();
+        }
+        catch (const Error &error) {
+            croak( "Exception: %s", error.get_msg().c_str() );
         }
     OUTPUT:
         RETVAL
@@ -363,8 +384,8 @@ WritableDatabase::set_metadata(string key, string value)
     CODE:
 	try {
 	    THIS->set_metadata(key, value);
-	} catch (...) {
-	    handle_exception();
+	} catch (const Error &error) {
+	    croak( "Exception: %s", error.get_msg().c_str() );
 	}
 
 void
@@ -375,8 +396,8 @@ WritableDatabase::add_synonym(string term, string synonym)
     CODE:
 	try {
 	    THIS->add_synonym(term, synonym);
-	} catch (...) {
-	    handle_exception();
+	} catch (const Error &error) {
+	    croak( "Exception: %s", error.get_msg().c_str() );
 	}
 
 void
@@ -384,8 +405,8 @@ WritableDatabase::remove_synonym(string term, string synonym)
     CODE:
 	try {
 	    THIS->remove_synonym(term, synonym);
-	} catch (...) {
-	    handle_exception();
+	} catch (const Error &error) {
+	    croak( "Exception: %s", error.get_msg().c_str() );
 	}
 
 void
@@ -393,8 +414,8 @@ WritableDatabase::clear_synonyms(string term)
     CODE:
 	try {
 	    THIS->clear_synonyms(term);
-	} catch (...) {
-	    handle_exception();
+	} catch (const Error &error) {
+	    croak( "Exception: %s", error.get_msg().c_str() );
 	}
 
 void
@@ -404,8 +425,8 @@ WritableDatabase::add_spelling(word, freqinc = 1)
     CODE:
 	try {
 	    THIS->add_spelling(word, freqinc);
-	} catch (...) {
-	    handle_exception();
+	} catch (const Error &error) {
+	    croak( "Exception: %s", error.get_msg().c_str() );
 	}
 
 void
@@ -415,6 +436,6 @@ WritableDatabase::remove_spelling(word, freqdec  = 1)
     CODE:
 	try {
 	    THIS->remove_spelling(word, freqdec);
-	} catch (...) {
-	    handle_exception();
+	} catch (const Error &error) {
+	    croak( "Exception: %s", error.get_msg().c_str() );
 	}

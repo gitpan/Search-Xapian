@@ -5,11 +5,7 @@ PROTOTYPES: ENABLE
 BM25Weight *
 new1()
     CODE:
-	try {
-	    RETVAL = new BM25Weight();
-	} catch (...) {
-	    handle_exception();
-	}
+        RETVAL = new BM25Weight();
     OUTPUT:
         RETVAL
 
@@ -21,11 +17,7 @@ new2(k1, k2, k3, b, min_normlen)
     double	b
     double	min_normlen
     CODE:
-	try {
-	    RETVAL = new BM25Weight(k1, k2, k3, b, min_normlen);
-	} catch (...) {
-	    handle_exception();
-	}
+	RETVAL = new BM25Weight(k1, k2, k3, b, min_normlen);
     OUTPUT:
 	RETVAL
 

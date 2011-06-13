@@ -23,8 +23,6 @@ ESet::get_ebound()
 
 termcount
 ESet::size()
-    ALIAS:
-	Search::Xapian::ESet::FETCHSIZE = 1
 
 bool
 ESet::empty()
@@ -47,13 +45,6 @@ ESetIterator *
 ESet::back()
     CODE:
         RETVAL = new ESetIterator(THIS->back());
-    OUTPUT:
-        RETVAL
-
-ESetIterator *
-ESet::FETCH(doccount i)
-    CODE:
-        RETVAL = new ESetIterator((*THIS)[i]);
     OUTPUT:
         RETVAL
 

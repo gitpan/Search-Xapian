@@ -5,6 +5,8 @@ use strict;
 use warnings;
 use Carp;
 
+use Search::Xapian::MSet::Tied;
+
 require DynaLoader;
 
 our @ISA = qw(DynaLoader);
@@ -56,7 +58,9 @@ sub get_mset {
 
 sub matches {
   my $self = shift;
-  return $self->get_mset(@_)->items();
+  my @array;
+  tie( @array, 'Search::Xapian::MSet::Tied', $self->get_mset(@_) );
+  return @array;
 }
 
 sub get_matching_terms_begin {
@@ -242,7 +246,7 @@ is reversed.  (default true)
 
 Get match set.
 
-=item get_eset <maxitems> <rset> [<decider>]
+=item get_eset
 
 Get set of query expansion terms.
 

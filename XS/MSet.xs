@@ -87,8 +87,6 @@ MSet::get_max_attained()
 
 doccount
 MSet::size()
-    ALIAS:
-	Search::Xapian::MSet::FETCHSIZE = 1
 
 bool
 MSet::empty()
@@ -121,10 +119,7 @@ MSet::back()
         RETVAL
 
 MSetIterator *
-MSet::FETCH(doccount i)
-# get_msetiterator() alias for backward compatibility.
-    ALIAS:
-	Search::Xapian::MSet::get_msetiterator = 1
+MSet::get_msetiterator(doccount i)
     CODE:
         RETVAL = new MSetIterator((*THIS)[i]);
     OUTPUT:

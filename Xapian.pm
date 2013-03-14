@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '1.2.10.0';
+our $VERSION = '1.2.13.0';
 
 use Exporter 'import';
 
@@ -437,7 +437,7 @@ docs.
 =item Unwrapped classes
 
 The following Xapian classes are not yet wrapped:
-Error (and subclasses), ErrorHandler, standard ExpandDecider subclasses
+ErrorHandler, standard ExpandDecider subclasses
 (user-defined ones works),
 user-defined weight classes.
 

@@ -5,8 +5,9 @@
 #########################
 
 use Test;
+use Devel::Leak;
 use Devel::Peek;
-BEGIN { plan tests => 60 };
+BEGIN { plan tests => 61 };
 use Search::Xapian qw(:standard);
 ok(1); # If we made it this far, we're ok.
 
@@ -57,6 +58,17 @@ my $vrp;
 ok( $vrp = new Search::Xapian::StringValueRangeProcessor(1) );
 $qp->add_valuerangeprocessor($vrp);
 $qp->add_boolean_prefix("test", "XTEST");
+
+my $handle;
+my $count = Devel::Leak::NoteSV($handle);
+{
+    my $qp2 = new Search::Xapian::QueryParser();
+    $qp2->add_valuerangeprocessor(
+	Search::Xapian::StringValueRangeProcessor->new(1, 'test:', 1));
+    $qp2->set_stopper(Search::Xapian::SimpleStopper->new(qw(a an the)));
+    $qp2->set_stopper(Search::Xapian::SimpleStopper->new(qw(a the)));
+}
+ok( $count == Devel::Leak::CheckSV($handle) );
 
 my $pair;
 foreach $pair (

@@ -7,7 +7,7 @@ Enquire::new(databases)
     Database *  databases
     CODE:
 	try {
-	    RETVAL = new Enquire(*databases);
+	    RETVAL = XAPIAN_PERL_NEW(Enquire, (*databases));
 	} catch (...) {
 	    handle_exception();
 	}
@@ -83,12 +83,18 @@ Enquire::set_cutoff(percent_cutoff, weight_cutoff = NO_INIT)
 
 void
 Enquire::set_sort_by_relevance()
+    CODE:
+	// Clear reference to any currently set sorter object.
+	XAPIAN_PERL_REF(Enquire, THIS, sorter, NULL);
+	THIS->set_sort_by_relevance();
 
 void
 Enquire::set_sort_by_value(sort_key, ascending = NO_INIT)
     valueno	sort_key
     bool	ascending
     CODE:
+	// Clear reference to any currently set sorter object.
+	XAPIAN_PERL_REF(Enquire, THIS, sorter, NULL);
 	try {
 	    if (items == 3) { /* items includes the hidden this pointer */
 		THIS->set_sort_by_value(sort_key, ascending);
@@ -104,6 +110,8 @@ Enquire::set_sort_by_value_then_relevance(sort_key, ascending = NO_INIT)
     valueno	sort_key
     bool	ascending
     CODE:
+	// Clear reference to any currently set sorter object.
+	XAPIAN_PERL_REF(Enquire, THIS, sorter, NULL);
 	try {
 	    if (items == 3) { /* items includes the hidden this pointer */
 		THIS->set_sort_by_value_then_relevance(sort_key, ascending);
@@ -119,6 +127,8 @@ Enquire::set_sort_by_relevance_then_value(sort_key, ascending = NO_INIT)
     valueno	sort_key
     bool	ascending
     CODE:
+	// Clear reference to any currently set sorter object.
+	XAPIAN_PERL_REF(Enquire, THIS, sorter, NULL);
 	try {
 	    if (items == 3) { /* items includes the hidden this pointer */
 		THIS->set_sort_by_relevance_then_value(sort_key, ascending);
@@ -134,10 +144,9 @@ Enquire::set_sort_by_key(sorter, ascending = NO_INIT)
     MultiValueSorter * sorter
     bool	ascending
     CODE:
+	// Keep a reference to the currently set object.
+	XAPIAN_PERL_REF(Enquire, THIS, sorter, ST(1));
 	try {
-	    // FIXME: no corresponding SvREFCNT_dec(), but a leak seems better
-	    // than a SEGV!
-	    SvREFCNT_inc(ST(1));
 	    if (items == 3) { /* items includes the hidden this pointer */
 		THIS->set_sort_by_key(sorter, ascending);
 	    } else {
@@ -152,10 +161,9 @@ Enquire::set_sort_by_key_then_relevance(sorter, ascending = NO_INIT)
     MultiValueSorter * sorter
     bool	ascending
     CODE:
+	// Keep a reference to the currently set object.
+	XAPIAN_PERL_REF(Enquire, THIS, sorter, ST(1));
 	try {
-	    // FIXME: no corresponding SvREFCNT_dec(), but a leak seems better
-	    // than a SEGV!
-	    SvREFCNT_inc(ST(1));
 	    if (items == 3) { /* items includes the hidden this pointer */
 		THIS->set_sort_by_key_then_relevance(sorter, ascending);
 	    } else {
@@ -170,10 +178,9 @@ Enquire::set_sort_by_relevance_then_key(sorter, ascending = NO_INIT)
     MultiValueSorter * sorter
     bool	ascending
     CODE:
+	// Keep a reference to the currently set object.
+	XAPIAN_PERL_REF(Enquire, THIS, sorter, ST(1));
 	try {
-	    // FIXME: no corresponding SvREFCNT_dec(), but a leak seems better
-	    // than a SEGV!
-	    SvREFCNT_inc(ST(1));
 	    if (items == 3) { /* items includes the hidden this pointer */
 		THIS->set_sort_by_relevance_then_key(sorter, ascending);
 	    } else {
@@ -321,3 +328,5 @@ Enquire::get_description()
 
 void
 Enquire::DESTROY()
+    CODE:
+	XAPIAN_PERL_DESTROY(Enquire, THIS);
